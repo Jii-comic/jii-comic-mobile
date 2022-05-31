@@ -23,7 +23,7 @@ class SecondaryButton extends StatelessWidget {
         side: BorderSide(width: 1, color: borderColor ?? Colors.black),
       ),
       child: child,
-      onPressed: () {},
+      onPressed: onPressed,
     );
   }
 }

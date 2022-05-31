@@ -15,7 +15,7 @@ class PrimaryButton extends StatelessWidget {
       ),
       increaseWidthBy: double.infinity,
       child: child,
-      callback: () {},
+      callback: onPressed,
       gradient:
           Gradients.buildGradient(Alignment.centerLeft, Alignment.topRight, [
         Color(0xffEE9D00),

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:jii_comic_mobile/providers/auth.provider.dart';
 import 'package:jii_comic_mobile/screens/greeting.screen.dart';
 import 'package:jii_comic_mobile/screens/home.screen.dart';
+import 'package:jii_comic_mobile/screens/login.screen.dart';
+import 'package:jii_comic_mobile/screens/register.screen.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -30,10 +32,12 @@ class JiiComic extends StatelessWidget {
             // is not restarted.
             primarySwatch: Colors.blue,
           ),
-          home: const MyHomePage(title: 'Flutter Demo Home Page'),
-          initialRoute: GreetingScreen.routeName,
+          initialRoute: HomeScreen.routeName,
           routes: {
-            GreetingScreen.routeName: (context) => const GreetingScreen()
+            HomeScreen.routeName: (context) => const HomeScreen(),
+            GreetingScreen.routeName: (context) => const GreetingScreen(),
+            LoginScreen.routeName: (context) => const LoginScreen(),
+            RegisterScreen.routeName: (context) => const RegisterScreen()
           },
         ));
   }

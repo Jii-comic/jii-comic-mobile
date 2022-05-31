@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gradient_widgets/gradient_widgets.dart';
+import 'package:jii_comic_mobile/screens/login.screen.dart';
+import 'package:jii_comic_mobile/screens/register.screen.dart';
 import 'package:jii_comic_mobile/widgets/primary_btn.dart';
 import 'package:jii_comic_mobile/widgets/secondary_btn.dart';
 
@@ -50,7 +52,10 @@ class GreetingScreen extends StatelessWidget {
                   Expanded(
                     child: SecondaryButton(
                       borderColor: Colors.white,
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.of(context)
+                            .pushNamed(RegisterScreen.routeName);
+                      },
                       child: Text(
                         "Đăng kí".toUpperCase(),
                         style: TextStyle(color: Colors.white),
@@ -63,7 +68,9 @@ class GreetingScreen extends StatelessWidget {
                   Expanded(
                     child: PrimaryButton(
                       child: Text("Đăng nhập".toUpperCase()),
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.of(context).pushNamed(LoginScreen.routeName);
+                      },
                     ),
                   ),
                 ],

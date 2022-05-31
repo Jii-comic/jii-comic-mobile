@@ -37,6 +37,7 @@ dependencies:
   provider: ^6.0.3
   gradient_widgets: ^0.6.0
   flutter_native_splash: ^2.1.6
+  font_awesome_flutter: ^10.1.0
 
 dev_dependencies:
   flutter_test:
