@@ -107,14 +107,16 @@ class _HomeScreenState extends State<HomeScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  decoration: BoxDecoration(boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.25),
-                      spreadRadius: 0,
-                      blurRadius: 4,
-                      offset: Offset(0, 4), // changes position of shadow
-                    ),
-                  ]),
+                  decoration: BoxDecoration(
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.25),
+                        spreadRadius: 0,
+                        blurRadius: 4,
+                        offset: Offset(0, 4), // changes position of shadow
+                      ),
+                    ],
+                  ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.all(
                       Radius.circular(10),

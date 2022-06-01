@@ -38,6 +38,7 @@ dependencies:
   gradient_widgets: ^0.6.0
   flutter_native_splash: ^2.1.6
   font_awesome_flutter: ^10.1.0
+  modal_bottom_sheet: ^2.0.1
 
 dev_dependencies:
   flutter_test:
