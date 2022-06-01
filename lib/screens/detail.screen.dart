@@ -6,22 +6,23 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:jii_comic_mobile/widgets/comic_list.dart';
 import 'package:jii_comic_mobile/widgets/primary_btn.dart';
 
-class HomeScreen extends StatefulWidget {
+class DetailScreen extends StatefulWidget {
   static const routeName = "/";
-  const HomeScreen({Key? key}) : super(key: key);
+  const DetailScreen({Key? key}) : super(key: key);
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<DetailScreen> createState() => _DetailScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
-  int _selectedIndex = 0;
+class _DetailScreenState extends State<DetailScreen> {
+  String description = "Lorem Ipsum Dono";
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
+  List chapters = [
+    "chapter1",
+    "chapter2",
+    "chapter3",
+    "chapter4",
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -35,29 +36,6 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           IconButton(onPressed: () {}, icon: FaIcon(FontAwesomeIcons.search))
         ],
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: [
-          BottomNavigationBarItem(
-            icon: FaIcon(FontAwesomeIcons.home),
-            label: "Home",
-          ),
-          BottomNavigationBarItem(
-            icon: FaIcon(FontAwesomeIcons.list),
-            label: "Manga",
-          ),
-          BottomNavigationBarItem(
-            icon: FaIcon(FontAwesomeIcons.bookmark),
-            label: "My List",
-          ),
-          BottomNavigationBarItem(
-            icon: FaIcon(FontAwesomeIcons.person),
-            label: "Profile",
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.orange,
-        onTap: _onItemTapped,
       ),
       body: Column(
         children: [
@@ -85,16 +63,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 padding: EdgeInsets.all(16),
                 child: Column(
                   children: [
-                    ComicList(
-                      title: "Mới",
-                      hasMore: false,
-                    ),
-                    SizedBox(
-                      height: 16,
-                    ),
-                    ComicList(
-                      title: "Tiếp tục cuộc hành trình còn dang dở",
-                      hasMore: false,
+                    _description(description),
+                    _chapterList(chapters),
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 16),
+                      child: ComicList(
+                        title: "Các truyện cùng thể loại",
+                        hasMore: false,
+                      ),
                     ),
                   ],
                 ),
@@ -186,7 +162,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       // Spacer(),
                       SizedBox(height: 16),
                       PrimaryButton(
-                          child: Text("Đọc ngay".toUpperCase()),
+                          child: Text("Bắt đầu đọc".toUpperCase()),
                           onPressed: () {})
                     ],
                   ),
@@ -214,4 +190,41 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+}
+
+Widget _description(String description) {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Container(
+        padding: EdgeInsets.only(bottom: 8),
+        child: Text("Mô tả"),
+      ),
+      Container(
+        padding: EdgeInsets.only(bottom: 8),
+        child: Text(description),
+      ),
+    ],
+  );
+}
+
+Widget _chapterList(List chapters) {
+  const latest_update = "23 phút";
+
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text("Số tập: ${chapters.length}"),
+      Text("Cập nhật $latest_update} trước"),
+      ListView(
+        children: chapters
+            .map((chapter) => ListTile(
+                  leading: Image.network(
+                      "http://res.cloudinary.com/ddkz3f3xa/image/upload/v1653370609/cwn2qfht5irwzqw5o7d7.jpg"),
+                  title: chapter,
+                ))
+            .toList(),
+      )
+    ],
+  );
 }
