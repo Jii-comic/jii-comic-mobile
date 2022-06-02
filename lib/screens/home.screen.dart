@@ -4,8 +4,12 @@ import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:jii_comic_mobile/models/user.model.dart';
+import 'package:jii_comic_mobile/providers/auth.provider.dart';
+import 'package:jii_comic_mobile/screens/login.screen.dart';
 import 'package:jii_comic_mobile/widgets/comic_list.dart';
 import 'package:jii_comic_mobile/widgets/primary_btn.dart';
+import 'package:provider/provider.dart';
 
 class HomeScreen extends StatefulWidget {
   static const routeName = "/";
@@ -25,18 +29,41 @@ class _HomeScreenState extends State<HomeScreen> {
     Navigator.pushNamed(context, "/detail");
   }
 
+  Widget _renderUserAvatar({required User user}) {
+    return CircleAvatar(
+      backgroundImage: NetworkImage(user.avatarUrl == ""
+          ? "http://via.placeholder.com/48"
+          : user.avatarUrl as String),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final User? user = Provider.of<AuthProvider>(context).currentUser;
+
+    void _handleUserBtnClick() {
+      if (user == null) {
+        Navigator.of(context).pushNamed(LoginScreen.routeName);
+      }
+    }
+
     return Scaffold(
       extendBodyBehindAppBar: true,
       backgroundColor: Color(0xFFEEEEEE),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
+        leading: IconButton(
+          icon: user == null
+              ? FaIcon(FontAwesomeIcons.user)
+              : _renderUserAvatar(user: user),
+          onPressed: _handleUserBtnClick,
+        ),
         title: Text("Jii Comic"),
         centerTitle: true,
         actions: [
-          IconButton(onPressed: () {}, icon: FaIcon(FontAwesomeIcons.search))
+          IconButton(
+              onPressed: () {}, icon: FaIcon(FontAwesomeIcons.magnifyingGlass))
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(

@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:jii_comic_mobile/providers/auth.provider.dart';
 import 'package:jii_comic_mobile/widgets/primary_btn.dart';
+import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
   static const routeName = "/login";
@@ -11,10 +13,17 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final _email = TextEditingController();
+  final _password = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
+    void _submit() async {
+      await Provider.of<AuthProvider>(context, listen: false).login(
+          context: context, email: _email.text, password: _password.text);
+    }
+
     return Scaffold(
       backgroundColor: Color(0xffEEEEEE),
       extendBodyBehindAppBar: true,
@@ -37,16 +46,20 @@ class _LoginScreenState extends State<LoginScreen> {
               SizedBox(
                 height: 24,
               ),
-              _renderInput(label: "Email", placeholder: "abc@abc.com"),
+              _renderInput(
+                  label: "Email",
+                  placeholder: "abc@abc.com",
+                  controller: _email),
               SizedBox(
                 height: 24,
               ),
-              _renderInput(label: "Mật khẩu"),
+              _renderInput(
+                  label: "Mật khẩu", controller: _password, encrypted: true),
               SizedBox(
                 height: 24,
               ),
               PrimaryButton(
-                  child: Text("Đăng nhập".toUpperCase()), onPressed: () {})
+                  child: Text("Đăng nhập".toUpperCase()), onPressed: _submit)
             ],
           ),
         ),
@@ -54,7 +67,11 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  Widget _renderInput({required label, placeholder = ""}) {
+  Widget _renderInput(
+      {required label,
+      placeholder = "",
+      required controller,
+      bool encrypted = false}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -63,6 +80,10 @@ class _LoginScreenState extends State<LoginScreen> {
           height: 8,
         ),
         TextFormField(
+          controller: controller,
+          obscureText: encrypted,
+          enableSuggestions: !encrypted,
+          autocorrect: !encrypted,
           decoration: InputDecoration(
             hintText: placeholder,
             filled: true,
