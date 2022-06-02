@@ -4,6 +4,7 @@ import 'package:jii_comic_mobile/screens/greeting.screen.dart';
 import 'package:jii_comic_mobile/screens/home.screen.dart';
 import 'package:jii_comic_mobile/screens/login.screen.dart';
 import 'package:jii_comic_mobile/screens/register.screen.dart';
+import 'package:jii_comic_mobile/screens/detail.screen.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -37,7 +38,8 @@ class JiiComic extends StatelessWidget {
             HomeScreen.routeName: (context) => const HomeScreen(),
             GreetingScreen.routeName: (context) => const GreetingScreen(),
             LoginScreen.routeName: (context) => const LoginScreen(),
-            RegisterScreen.routeName: (context) => const RegisterScreen()
+            RegisterScreen.routeName: (context) => const RegisterScreen(),
+            DetailScreen.routeName: (context) => const DetailScreen()
           },
         ));
   }

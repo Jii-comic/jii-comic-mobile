@@ -5,9 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:jii_comic_mobile/widgets/comic_list.dart';
 import 'package:jii_comic_mobile/widgets/primary_btn.dart';
+import 'package:jii_comic_mobile/widgets/expandable_text.dart';
 
 class DetailScreen extends StatefulWidget {
-  static const routeName = "/";
+  static const routeName = "/detail";
   const DetailScreen({Key? key}) : super(key: key);
 
   @override
@@ -15,13 +16,25 @@ class DetailScreen extends StatefulWidget {
 }
 
 class _DetailScreenState extends State<DetailScreen> {
-  String description = "Lorem Ipsum Dono";
+  String description =
+      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
 
-  List chapters = [
-    "chapter1",
-    "chapter2",
-    "chapter3",
-    "chapter4",
+  final chapters = [
+    {
+      "title": "chapter 1",
+      "url":
+          "http://res.cloudinary.com/ddkz3f3xa/image/upload/v1653370609/cwn2qfht5irwzqw5o7d7.jpg"
+    },
+    {
+      "title": "chapter 2",
+      "url":
+          "http://res.cloudinary.com/ddkz3f3xa/image/upload/v1653370609/cwn2qfht5irwzqw5o7d7.jpg"
+    },
+    {
+      "title": "chapter 3",
+      "url":
+          "http://res.cloudinary.com/ddkz3f3xa/image/upload/v1653370609/cwn2qfht5irwzqw5o7d7.jpg"
+    },
   ];
 
   @override
@@ -33,38 +46,23 @@ class _DetailScreenState extends State<DetailScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         title: Text("Jii Comic"),
+        centerTitle: true,
         actions: [
-          IconButton(onPressed: () {}, icon: FaIcon(FontAwesomeIcons.search))
+          IconButton(onPressed: () {}, icon: FaIcon(FontAwesomeIcons.bookmark))
         ],
       ),
       body: Column(
         children: [
           _renderHighlightedComic(),
-          Container(
-            width: double.infinity,
-            height: 48,
-            child: ListView.separated(
-              scrollDirection: Axis.horizontal,
-              itemBuilder: (context, index) => IconButton(
-                onPressed: () {},
-                icon: CircleAvatar(
-                    backgroundImage: NetworkImage(
-                        "http://res.cloudinary.com/ddkz3f3xa/image/upload/v1653370609/cwn2qfht5irwzqw5o7d7.jpg")),
-              ),
-              itemCount: 12,
-              separatorBuilder: (context, index) => SizedBox(
-                width: 4,
-              ),
-            ),
-          ),
           Expanded(
             child: SingleChildScrollView(
               child: Container(
                 padding: EdgeInsets.all(16),
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _description(description),
-                    _chapterList(chapters),
+                    // _chapterList(chapters),
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: 16),
                       child: ComicList(
@@ -198,17 +196,20 @@ Widget _description(String description) {
     children: [
       Container(
         padding: EdgeInsets.only(bottom: 8),
-        child: Text("Mô tả"),
+        child: Text(
+          "Mô tả",
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+        ),
       ),
       Container(
         padding: EdgeInsets.only(bottom: 8),
-        child: Text(description),
+        child: ExpandableText(description),
       ),
     ],
   );
 }
 
-Widget _chapterList(List chapters) {
+Widget _chapterList(chapters) {
   const latest_update = "23 phút";
 
   return Column(
@@ -218,9 +219,20 @@ Widget _chapterList(List chapters) {
       Text("Cập nhật $latest_update} trước"),
       ListView(
         children: chapters
-            .map((chapter) => ListTile(
-                  leading: Image.network(
-                      "http://res.cloudinary.com/ddkz3f3xa/image/upload/v1653370609/cwn2qfht5irwzqw5o7d7.jpg"),
+            .map<Widget>((chapter) => ListTile(
+                  // leading: Image.network(
+                  //     "http://res.cloudinary.com/ddkz3f3xa/image/upload/v1653370609/cwn2qfht5irwzqw5o7d7.jpg"),
+                  leading: Container(
+                    width: 32,
+                    height: 48,
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        fit: BoxFit.cover,
+                        image: NetworkImage(
+                            "http://res.cloudinary.com/ddkz3f3xa/image/upload/v1653370609/cwn2qfht5irwzqw5o7d7.jpg"),
+                      ),
+                    ),
+                  ),
                   title: chapter,
                 ))
             .toList(),

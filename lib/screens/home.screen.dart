@@ -1,3 +1,4 @@
+// import 'dart:html';
 import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
@@ -21,6 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       _selectedIndex = index;
     });
+    Navigator.pushNamed(context, "/detail");
   }
 
   @override
@@ -32,11 +34,13 @@ class _HomeScreenState extends State<HomeScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         title: Text("Jii Comic"),
+        centerTitle: true,
         actions: [
           IconButton(onPressed: () {}, icon: FaIcon(FontAwesomeIcons.search))
         ],
       ),
       bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
         items: [
           BottomNavigationBarItem(
             icon: FaIcon(FontAwesomeIcons.home),
