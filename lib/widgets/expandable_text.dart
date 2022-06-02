@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:jii_comic_mobile/utils/color_constants.dart';
 
 class ExpandableText extends StatefulWidget {
-  ExpandableText(this.text);
+  ExpandableText({required this.text});
 
   final String text;
-  bool isExpanded = false;
 
   @override
   _ExpandableTextState createState() => new _ExpandableTextState();
@@ -12,35 +12,45 @@ class ExpandableText extends StatefulWidget {
 
 class _ExpandableTextState extends State<ExpandableText>
     with TickerProviderStateMixin<ExpandableText> {
+  bool isExpanded = false;
+
   @override
   Widget build(BuildContext context) {
-    return new Column(children: <Widget>[
-      new AnimatedSize(
-          vsync: this,
+    return Column(
+      children: <Widget>[
+        AnimatedSize(
+          curve: Curves.ease,
           duration: const Duration(milliseconds: 200),
-          child: ConstrainedBox(
-              constraints: widget.isExpanded
-                  ? const BoxConstraints()
-                  : const BoxConstraints(maxHeight: 64.0),
-              child: Text(
-                widget.text,
-                softWrap: true,
-                overflow: TextOverflow.fade,
-                style: TextStyle(fontSize: 16),
-              ))),
-      widget.isExpanded
-          ? TextButton(
-              child: const Text(
-                'Hiển thị ít hơn',
-                style: TextStyle(color: Color(0xffF65600), fontSize: 12),
-              ),
-              onPressed: () => setState(() => widget.isExpanded = false))
-          : TextButton(
-              child: const Text(
-                'Xem thêm',
-                style: TextStyle(color: Color(0xffF65600), fontSize: 12),
-              ),
-              onPressed: () => setState(() => widget.isExpanded = true))
-    ]);
+          child: Container(
+            margin: EdgeInsets.only(bottom: 8),
+            child: Text(
+              widget.text,
+              maxLines: !isExpanded ? 3 : null,
+              style: TextStyle(fontSize: 16),
+            ),
+          ),
+        ),
+        isExpanded
+            ? InkWell(
+                child: Text(
+                  'Hiển thị ít hơn',
+                  style: Theme.of(context)
+                      .textTheme
+                      .caption
+                      ?.copyWith(color: ColorConstants.solidColor),
+                ),
+                onTap: () => setState(() => isExpanded = false))
+            : InkWell(
+                child: Text(
+                  'Xem thêm',
+                  style: Theme.of(context)
+                      .textTheme
+                      .caption
+                      ?.copyWith(color: ColorConstants.solidColor),
+                ),
+                onTap: () => setState(() => isExpanded = true),
+              )
+      ],
+    );
   }
 }

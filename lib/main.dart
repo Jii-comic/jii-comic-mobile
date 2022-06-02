@@ -24,7 +24,7 @@ class JiiComic extends StatelessWidget {
         child: MaterialApp(
           title: 'Jii Comic',
           theme: defaultTheme,
-          initialRoute: ReadingScreen.routeName,
+          initialRoute: DetailScreen.routeName,
           routes: {
             HomeScreen.routeName: (context) => const HomeScreen(),
             GreetingScreen.routeName: (context) => const GreetingScreen(),

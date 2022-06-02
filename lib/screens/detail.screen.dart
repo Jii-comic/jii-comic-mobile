@@ -39,6 +39,8 @@ class _DetailScreenState extends State<DetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final lastUpdated = "23 phút";
+
     return Scaffold(
       extendBodyBehindAppBar: true,
       backgroundColor: Color(0xFFEEEEEE),
@@ -51,28 +53,37 @@ class _DetailScreenState extends State<DetailScreen> {
           IconButton(onPressed: () {}, icon: FaIcon(FontAwesomeIcons.bookmark))
         ],
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              padding: EdgeInsets.symmetric(vertical: 24),
-              child: _renderHighlightedComic(),
-            ),
-            Container(
-              padding: EdgeInsets.symmetric(horizontal: 16),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _renderHighlightedComic(),
+          Expanded(
+            child: SingleChildScrollView(
+              padding: EdgeInsets.all(16),
               child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _description(description),
-                    Container(
-                        child: _chapterList(
-                          chapters,
-                        )),
-                  ]),
-            )
-          ],
-        ),
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _renderDescription(description),
+                  SizedBox(height: 16),
+                  Text(
+                    "Số tập: ${chapters.length}",
+                    style: Theme.of(context).textTheme.headline3,
+                  ),
+                  Text(
+                    "Cập nhật $lastUpdated trước",
+                    style: TextStyle(
+                        fontSize: 16, color: Color.fromRGBO(0, 0, 0, 0.6)),
+                  ),
+                  SizedBox(
+                    height: 16,
+                  ),
+                  _renderChapterList(chapters: chapters)
+                ],
+              ),
+            ),
+          )
+        ],
       ),
     );
   }
@@ -103,7 +114,8 @@ class _DetailScreenState extends State<DetailScreen> {
         DefaultTextStyle(
           style: TextStyle(color: Colors.white),
           child: Container(
-            padding: EdgeInsets.only(top: 104, left: 16, right: 16, bottom: 16),
+            margin: EdgeInsets.only(top: 88),
+            padding: EdgeInsets.all(16),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -185,84 +197,63 @@ class _DetailScreenState extends State<DetailScreen> {
       ),
     );
   }
-}
 
-Widget _description(String description) {
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Container(
-        padding: EdgeInsets.only(bottom: 8),
-        child: Text(
-          "Mô tả",
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+  Widget _renderDescription(String description) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          margin: EdgeInsets.only(bottom: 8),
+          child: Text(
+            "Mô tả",
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+          ),
+        ),
+        ExpandableText(text: description)
+      ],
+    );
+  }
+
+  Widget _renderChapterList({chapters = const []}) {
+    return ListView(
+      shrinkWrap: true,
+      physics: NeverScrollableScrollPhysics(),
+      padding: EdgeInsets.zero,
+      children: chapters
+          .map<Widget>((chapter) => _renderChapter(chapter: chapter))
+          .toList(),
+    );
+  }
+
+  Widget _renderChapter({required chapter}) {
+    return ListTile(
+      contentPadding: EdgeInsets.zero,
+      leading: Container(
+        height: 48,
+        width: 48,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.all(
+            Radius.circular(8),
+          ),
+          image: DecorationImage(
+            fit: BoxFit.cover,
+            image: NetworkImage(chapter["url"]),
+          ),
         ),
       ),
-      Container(
-        padding: EdgeInsets.only(bottom: 8),
-        child: ExpandableText(description),
+      title: Text(
+        chapter["title"],
+        style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
       ),
-    ],
-  );
-}
-
-_chapterList(chapters) {
-  const latest_update = "23 phút";
-
-  return Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Text(
-        "Số tập: ${chapters.length}",
-        style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600),
-      ),
-      Padding(
-        padding: EdgeInsets.only(top: 4),
-        child: Text(
-          "Cập nhật $latest_update trước",
-          style: TextStyle(fontSize: 16, color: Color.fromRGBO(0, 0, 0, 0.6)),
+      subtitle: Text(
+        "2 phút trước",
+        style: TextStyle(
+          fontSize: 12,
+          color: Color.fromRGBO(0, 0, 0, 0.6),
         ),
       ),
-      Container(
-        padding: EdgeInsets.symmetric(vertical: 16),
-        child: Column(
-            children: chapters
-                .map<Widget>((chapter) => InkWell(
-                      onTap: _onTapHandle(),
-                      child: Container(
-                        padding: EdgeInsets.symmetric(vertical: 8),
-                        child: Row(children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(10),
-                            ),
-                            child: Image(
-                              width: 48,
-                              height: 48,
-                              fit: BoxFit.cover,
-                              image: NetworkImage(chapter["url"]),
-                            ),
-                          ),
-                          Container(
-                            padding: EdgeInsets.only(left: 8),
-                            child: Column(children: [
-                              Text(chapter["title"],
-                                  style: TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600)),
-                              Text("2 phút trước",
-                                  style: TextStyle(
-                                      fontSize: 12,
-                                      color: Color.fromRGBO(0, 0, 0, 0.6))),
-                            ]),
-                          )
-                        ]),
-                      ),
-                    ))
-                .toList()),
-      )
-    ],
-  );
+    );
+  }
 }
 
 _onTapHandle() {}
