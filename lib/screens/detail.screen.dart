@@ -51,31 +51,28 @@ class _DetailScreenState extends State<DetailScreen> {
           IconButton(onPressed: () {}, icon: FaIcon(FontAwesomeIcons.bookmark))
         ],
       ),
-      body: Column(
-        children: [
-          _renderHighlightedComic(),
-          Expanded(
-            child: SingleChildScrollView(
-              child: Container(
-                padding: EdgeInsets.all(16),
-                child: Column(
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              padding: EdgeInsets.symmetric(vertical: 24),
+              child: _renderHighlightedComic(),
+            ),
+            Container(
+              padding: EdgeInsets.symmetric(horizontal: 16),
+              child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _description(description),
-                    // _chapterList(chapters),
-                    Padding(
-                      padding: EdgeInsets.symmetric(vertical: 16),
-                      child: ComicList(
-                        title: "Các truyện cùng thể loại",
-                        hasMore: false,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          )
-        ],
+                    Container(
+                        child: _chapterList(
+                          chapters,
+                        )),
+                  ]),
+            )
+          ],
+        ),
       ),
     );
   }
@@ -209,34 +206,63 @@ Widget _description(String description) {
   );
 }
 
-Widget _chapterList(chapters) {
+_chapterList(chapters) {
   const latest_update = "23 phút";
 
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      Text("Số tập: ${chapters.length}"),
-      Text("Cập nhật $latest_update} trước"),
-      ListView(
-        children: chapters
-            .map<Widget>((chapter) => ListTile(
-                  // leading: Image.network(
-                  //     "http://res.cloudinary.com/ddkz3f3xa/image/upload/v1653370609/cwn2qfht5irwzqw5o7d7.jpg"),
-                  leading: Container(
-                    width: 32,
-                    height: 48,
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        fit: BoxFit.cover,
-                        image: NetworkImage(
-                            "http://res.cloudinary.com/ddkz3f3xa/image/upload/v1653370609/cwn2qfht5irwzqw5o7d7.jpg"),
+      Text(
+        "Số tập: ${chapters.length}",
+        style: TextStyle(fontSize: 24, fontWeight: FontWeight.w600),
+      ),
+      Padding(
+        padding: EdgeInsets.only(top: 4),
+        child: Text(
+          "Cập nhật $latest_update trước",
+          style: TextStyle(fontSize: 16, color: Color.fromRGBO(0, 0, 0, 0.6)),
+        ),
+      ),
+      Container(
+        padding: EdgeInsets.symmetric(vertical: 16),
+        child: Column(
+            children: chapters
+                .map<Widget>((chapter) => InkWell(
+                      onTap: _onTapHandle(),
+                      child: Container(
+                        padding: EdgeInsets.symmetric(vertical: 8),
+                        child: Row(children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(10),
+                            ),
+                            child: Image(
+                              width: 48,
+                              height: 48,
+                              fit: BoxFit.cover,
+                              image: NetworkImage(chapter["url"]),
+                            ),
+                          ),
+                          Container(
+                            padding: EdgeInsets.only(left: 8),
+                            child: Column(children: [
+                              Text(chapter["title"],
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600)),
+                              Text("2 phút trước",
+                                  style: TextStyle(
+                                      fontSize: 12,
+                                      color: Color.fromRGBO(0, 0, 0, 0.6))),
+                            ]),
+                          )
+                        ]),
                       ),
-                    ),
-                  ),
-                  title: chapter,
-                ))
-            .toList(),
+                    ))
+                .toList()),
       )
     ],
   );
 }
+
+_onTapHandle() {}

@@ -21,7 +21,7 @@ class _ExpandableTextState extends State<ExpandableText>
           child: ConstrainedBox(
               constraints: widget.isExpanded
                   ? const BoxConstraints()
-                  : const BoxConstraints(maxHeight: 50.0),
+                  : const BoxConstraints(maxHeight: 64.0),
               child: Text(
                 widget.text,
                 softWrap: true,
@@ -29,7 +29,12 @@ class _ExpandableTextState extends State<ExpandableText>
                 style: TextStyle(fontSize: 16),
               ))),
       widget.isExpanded
-          ? ConstrainedBox(constraints: BoxConstraints())
+          ? TextButton(
+              child: const Text(
+                'Hiển thị ít hơn',
+                style: TextStyle(color: Color(0xffF65600), fontSize: 12),
+              ),
+              onPressed: () => setState(() => widget.isExpanded = false))
           : TextButton(
               child: const Text(
                 'Xem thêm',
