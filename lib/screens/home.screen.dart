@@ -1,3 +1,4 @@
+// import 'dart:html';
 import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
@@ -15,6 +16,15 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  int _selectedIndex = 0;
+
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+    Navigator.pushNamed(context, "/detail");
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,9 +34,34 @@ class _HomeScreenState extends State<HomeScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         title: Text("Jii Comic"),
+        centerTitle: true,
         actions: [
           IconButton(onPressed: () {}, icon: FaIcon(FontAwesomeIcons.search))
         ],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        items: [
+          BottomNavigationBarItem(
+            icon: FaIcon(FontAwesomeIcons.home),
+            label: "Home",
+          ),
+          BottomNavigationBarItem(
+            icon: FaIcon(FontAwesomeIcons.list),
+            label: "Manga",
+          ),
+          BottomNavigationBarItem(
+            icon: FaIcon(FontAwesomeIcons.bookmark),
+            label: "My List",
+          ),
+          BottomNavigationBarItem(
+            icon: FaIcon(FontAwesomeIcons.person),
+            label: "Profile",
+          ),
+        ],
+        currentIndex: _selectedIndex,
+        selectedItemColor: Colors.orange,
+        onTap: _onItemTapped,
       ),
       body: Column(
         children: [
