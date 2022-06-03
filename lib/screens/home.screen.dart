@@ -26,7 +26,7 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       _selectedIndex = index;
     });
-    Navigator.pushNamed(context, "/detail");
+    Navigator.pushNamed(context, "/");
   }
 
   Widget _renderUserAvatar({required User user}) {

@@ -4,9 +4,11 @@ import 'package:jii_comic_mobile/screens/greeting.screen.dart';
 import 'package:jii_comic_mobile/screens/home.screen.dart';
 import 'package:jii_comic_mobile/screens/login.screen.dart';
 import 'package:jii_comic_mobile/screens/reading.page.dart';
+import 'package:jii_comic_mobile/screens/profile.screen.dart';
 import 'package:jii_comic_mobile/screens/register.screen.dart';
 import 'package:jii_comic_mobile/themes/default.theme.dart';
 import 'package:jii_comic_mobile/screens/detail.screen.dart';
+import 'package:jii_comic_mobile/screens/updateProfile.screen.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -24,14 +26,16 @@ class JiiComic extends StatelessWidget {
         child: MaterialApp(
           title: 'Jii Comic',
           theme: defaultTheme,
-          initialRoute: HomeScreen.routeName,
+          initialRoute: ProfileScreen.routeName,
           routes: {
             HomeScreen.routeName: (context) => const HomeScreen(),
             GreetingScreen.routeName: (context) => const GreetingScreen(),
             LoginScreen.routeName: (context) => const LoginScreen(),
             RegisterScreen.routeName: (context) => const RegisterScreen(),
             ReadingScreen.routeName: (context) => const ReadingScreen(),
-            DetailScreen.routeName: (context) => const DetailScreen()
+            DetailScreen.routeName: (context) => const DetailScreen(),
+            ProfileScreen.routeName: (context) => const ProfileScreen(),
+            UpdateProfileScreen.routeName: (context) => const UpdateProfileScreen()
           },
         ));
   }
