@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:jii_comic_mobile/widgets/comic_list.dart';
 import 'package:jii_comic_mobile/widgets/primary_btn.dart';
+import 'package:jii_comic_mobile/widgets/custom_bottom_navigation_bar.dart';
 
 class HomeScreen extends StatefulWidget {
   static const routeName = "/";
@@ -39,30 +40,45 @@ class _HomeScreenState extends State<HomeScreen> {
           IconButton(onPressed: () {}, icon: FaIcon(FontAwesomeIcons.search))
         ],
       ),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        items: [
-          BottomNavigationBarItem(
-            icon: FaIcon(FontAwesomeIcons.home),
-            label: "Home",
-          ),
-          BottomNavigationBarItem(
-            icon: FaIcon(FontAwesomeIcons.list),
-            label: "Manga",
-          ),
-          BottomNavigationBarItem(
-            icon: FaIcon(FontAwesomeIcons.bookmark),
-            label: "My List",
-          ),
-          BottomNavigationBarItem(
-            icon: FaIcon(FontAwesomeIcons.person),
-            label: "Profile",
-          ),
+      bottomNavigationBar: CustomBottomNavigationBar(
+        iconList: [
+          FaIcon(FontAwesomeIcons.home),
+          FaIcon(FontAwesomeIcons.list),
+          FaIcon(FontAwesomeIcons.bookmark),
+          FaIcon(FontAwesomeIcons.person),
         ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.orange,
-        onTap: _onItemTapped,
+        onChange: (val) {
+          setState(() {
+            _selectedIndex = val;
+          });
+        },
+        defaultSelectedIndex: 1,
       ),
+      // bottomNavigationBar: BottomNavigationBar(
+      //   type: BottomNavigationBarType.fixed,
+      //   items: [
+      //     BottomNavigationBarItem(
+
+      //       icon: FaIcon(FontAwesomeIcons.home),
+      //       label: "Home",
+      //     ),
+      //     BottomNavigationBarItem(
+      //       icon: FaIcon(FontAwesomeIcons.list),
+      //       label: "Manga",
+      //     ),
+      //     BottomNavigationBarItem(
+      //       icon: FaIcon(FontAwesomeIcons.bookmark),
+      //       label: "My List",
+      //     ),
+      //     BottomNavigationBarItem(
+      //       icon: FaIcon(FontAwesomeIcons.person),
+      //       label: "Profile",
+      //     ),
+      //   ],
+      //   currentIndex: _selectedIndex,
+      //   selectedItemColor: Colors.orange,
+      //   onTap: _onItemTapped,
+      // ),
       body: Column(
         children: [
           _renderHighlightedComic(),
