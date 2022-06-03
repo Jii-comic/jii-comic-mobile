@@ -1,11 +1,21 @@
 import 'dart:ui';
 
+import 'package:expandable_text/expandable_text.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:jii_comic_mobile/models/chapter.model.dart';
+import 'package:jii_comic_mobile/models/chapterDetailProps.dart';
+import 'package:jii_comic_mobile/models/comic.model.dart';
+import 'package:jii_comic_mobile/models/comicDetailProps.dart';
+import 'package:jii_comic_mobile/providers/comics.provider.dart';
+import 'package:jii_comic_mobile/screens/reading.page.dart';
+import 'package:jii_comic_mobile/utils/color_constants.dart';
 import 'package:jii_comic_mobile/widgets/comic_list.dart';
 import 'package:jii_comic_mobile/widgets/primary_btn.dart';
-import 'package:jii_comic_mobile/widgets/expandable_text.dart';
+import 'package:jii_comic_mobile/widgets/spinner.dart';
+import 'package:provider/provider.dart';
+import "package:timeago/timeago.dart" as timeago;
 
 class DetailScreen extends StatefulWidget {
   static const routeName = "/detail";
@@ -16,88 +26,110 @@ class DetailScreen extends StatefulWidget {
 }
 
 class _DetailScreenState extends State<DetailScreen> {
-  String description =
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
+  late String _comicId;
+  Future<dynamic>? _comicFuture;
 
-  final chapters = [
-    {
-      "title": "chapter 1",
-      "url":
-          "http://res.cloudinary.com/ddkz3f3xa/image/upload/v1653370609/cwn2qfht5irwzqw5o7d7.jpg"
-    },
-    {
-      "title": "chapter 2",
-      "url":
-          "http://res.cloudinary.com/ddkz3f3xa/image/upload/v1653370609/cwn2qfht5irwzqw5o7d7.jpg"
-    },
-    {
-      "title": "chapter 3",
-      "url":
-          "http://res.cloudinary.com/ddkz3f3xa/image/upload/v1653370609/cwn2qfht5irwzqw5o7d7.jpg"
-    },
-  ];
-
-  @override
-  Widget build(BuildContext context) {
-    final lastUpdated = "23 phút";
-
-    return Scaffold(
-      extendBodyBehindAppBar: true,
-      backgroundColor: Color(0xFFEEEEEE),
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        title: Text("Jii Comic"),
-        centerTitle: true,
-        actions: [
-          IconButton(onPressed: () {}, icon: FaIcon(FontAwesomeIcons.bookmark))
-        ],
-      ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          _renderHighlightedComic(),
-          Expanded(
-            child: SingleChildScrollView(
-              padding: EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  _renderDescription(description),
-                  SizedBox(height: 16),
-                  Text(
-                    "Số tập: ${chapters.length}",
-                    style: Theme.of(context).textTheme.headline3,
-                  ),
-                  Text(
-                    "Cập nhật $lastUpdated trước",
-                    style: TextStyle(
-                        fontSize: 16, color: Color.fromRGBO(0, 0, 0, 0.6)),
-                  ),
-                  SizedBox(
-                    height: 16,
-                  ),
-                  _renderChapterList(chapters: chapters)
-                ],
-              ),
-            ),
-          )
-        ],
-      ),
+  void _goToChapter({required String chapterId}) {
+    if (chapterId == "") {
+      return;
+    }
+    Navigator.of(context).pushNamed(
+      ReadingScreen.routeName,
+      arguments: ChapterDetailProps(chapterId: chapterId, comicId: _comicId),
     );
   }
 
-  Widget _renderHighlightedComic() {
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    WidgetsBinding.instance?.addPostFrameCallback(
+      (_) {
+        final props =
+            ModalRoute.of(context)!.settings.arguments as ComicDetailProps;
+        setState(() {
+          _comicId = props.comicId;
+          _comicFuture = Provider.of<ComicsProvider>(context, listen: false)
+              .getComic(context, comicId: props.comicId);
+        });
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    timeago.setLocaleMessages("vi", timeago.ViMessages());
+
+    return Scaffold(
+        extendBodyBehindAppBar: true,
+        backgroundColor: Color(0xFFEEEEEE),
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          title: Text("Jii Comic"),
+          centerTitle: true,
+          actions: [
+            IconButton(
+                onPressed: () {}, icon: FaIcon(FontAwesomeIcons.bookmark))
+          ],
+        ),
+        body: FutureBuilder(
+          future: _comicFuture,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              final Comic _comic = snapshot.data as Comic;
+
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _renderHighlightedComic(comic: _comic),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      padding: EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          _renderDescription(_comic?.description ?? ""),
+                          SizedBox(height: 16),
+                          Text(
+                            "Danh sách tập",
+                            style: Theme.of(context).textTheme.headline3,
+                          ),
+                          Text(
+                            "Cập nhật lần cuối: ${timeago.format(_comic.updatedAt, locale: 'vi')}",
+                            style: TextStyle(
+                                fontSize: 16,
+                                color: Color.fromRGBO(0, 0, 0, 0.6)),
+                          ),
+                          SizedBox(
+                            height: 16,
+                          ),
+                          _renderChapterList(chapters: _comic.chapters ?? [])
+                        ],
+                      ),
+                    ),
+                  )
+                ],
+              );
+            }
+
+            return Spinner();
+          },
+        ));
+  }
+
+  Widget _renderHighlightedComic({required Comic comic}) {
     return ClipRRect(
-      borderRadius: BorderRadius.all(Radius.circular(16)),
+      borderRadius: BorderRadius.vertical(bottom: Radius.circular(16)),
       child: Stack(children: [
         Positioned.fill(
           child: Container(
             decoration: BoxDecoration(
               image: DecorationImage(
                 fit: BoxFit.cover,
-                image: NetworkImage(
+                image: NetworkImage(comic.thumbnailUrl ??
                     "http://res.cloudinary.com/ddkz3f3xa/image/upload/v1653370609/cwn2qfht5irwzqw5o7d7.jpg"),
               ),
             ),
@@ -137,7 +169,7 @@ class _DetailScreenState extends State<DetailScreen> {
                       width: 140,
                       height: 211,
                       fit: BoxFit.cover,
-                      image: NetworkImage(
+                      image: NetworkImage(comic.thumbnailUrl ??
                           "http://res.cloudinary.com/ddkz3f3xa/image/upload/v1653370609/cwn2qfht5irwzqw5o7d7.jpg"),
                     ),
                   ),
@@ -150,27 +182,27 @@ class _DetailScreenState extends State<DetailScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Spy X Family",
+                        comic.name,
                         maxLines: 2,
-                        style: TextStyle(
-                            fontSize: 28, fontWeight: FontWeight.w600),
+                        style: Theme.of(context)
+                            .textTheme
+                            .headline3
+                            ?.copyWith(color: Colors.white),
                       ),
                       SizedBox(height: 16),
                       Wrap(
-                        spacing: 4,
-                        children: [
-                          _renderGenre(label: "Action"),
-                          _renderGenre(label: "Comedy"),
-                          _renderGenre(label: "Slice of life"),
-                        ],
-                      ),
-                      SizedBox(height: 16),
-                      Text("Chapter: 13 / 21"),
-                      // Spacer(),
+                          spacing: 4,
+                          runSpacing: 4,
+                          children: comic.genres
+                                  ?.map((e) => _renderGenre(label: e.name))
+                                  .toList() ??
+                              []),
                       SizedBox(height: 16),
                       PrimaryButton(
-                          child: Text("Bắt đầu đọc".toUpperCase()),
-                          onPressed: () {})
+                        child: Text("Bắt đầu đọc".toUpperCase()),
+                        onPressed: () => _goToChapter(
+                            chapterId: comic.chapters?[0].chapterId ?? ""),
+                      ),
                     ],
                   ),
                 )
@@ -209,12 +241,18 @@ class _DetailScreenState extends State<DetailScreen> {
             style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
           ),
         ),
-        ExpandableText(text: description)
+        ExpandableText(
+          description,
+          expandText: "Xem thêm",
+          collapseText: "Thu gọn",
+          maxLines: 3,
+          linkColor: ColorConstants.solidColor,
+        )
       ],
     );
   }
 
-  Widget _renderChapterList({chapters = const []}) {
+  Widget _renderChapterList({List<Chapter> chapters = const []}) {
     return ListView(
       shrinkWrap: true,
       physics: NeverScrollableScrollPhysics(),
@@ -225,28 +263,16 @@ class _DetailScreenState extends State<DetailScreen> {
     );
   }
 
-  Widget _renderChapter({required chapter}) {
+  Widget _renderChapter({required Chapter chapter}) {
     return ListTile(
-      contentPadding: EdgeInsets.zero,
-      leading: Container(
-        height: 48,
-        width: 48,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.all(
-            Radius.circular(8),
-          ),
-          image: DecorationImage(
-            fit: BoxFit.cover,
-            image: NetworkImage(chapter["url"]),
-          ),
-        ),
-      ),
+      onTap: () => _goToChapter(chapterId: chapter.chapterId),
+      dense: true,
       title: Text(
-        chapter["title"],
+        chapter.name,
         style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
       ),
       subtitle: Text(
-        "2 phút trước",
+        timeago.format(chapter.createdAt, locale: "vi"),
         style: TextStyle(
           fontSize: 12,
           color: Color.fromRGBO(0, 0, 0, 0.6),
@@ -255,5 +281,3 @@ class _DetailScreenState extends State<DetailScreen> {
     );
   }
 }
-
-_onTapHandle() {}

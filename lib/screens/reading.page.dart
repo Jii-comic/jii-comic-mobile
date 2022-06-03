@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:jii_comic_mobile/models/chapter.model.dart';
+import 'package:jii_comic_mobile/models/chapterDetailProps.dart';
+import 'package:jii_comic_mobile/providers/comics.provider.dart';
 import 'package:jii_comic_mobile/utils/color_constants.dart';
+import 'package:jii_comic_mobile/widgets/spinner.dart';
 import 'package:modal_bottom_sheet/modal_bottom_sheet.dart';
+import 'package:provider/provider.dart';
 
 class ReadingScreen extends StatefulWidget {
   static const routeName = "/reading";
@@ -12,41 +17,40 @@ class ReadingScreen extends StatefulWidget {
 }
 
 class ReadingScreenState extends State<ReadingScreen> {
-  // Danh sách hình ảnh (code cứng).
-  List imageList = [
-    Image.network(
-        "http://res.cloudinary.com/ddkz3f3xa/image/upload/v1653370642/am8wfppncpakoyo7n9qt.jpg"),
-    Image.network(
-        "http://res.cloudinary.com/ddkz3f3xa/image/upload/v1653370642/am8wfppncpakoyo7n9qt.jpg"),
-    Image.network(
-        "http://res.cloudinary.com/ddkz3f3xa/image/upload/v1653370642/am8wfppncpakoyo7n9qt.jpg"),
-    Image.network(
-        "http://res.cloudinary.com/ddkz3f3xa/image/upload/v1653370642/am8wfppncpakoyo7n9qt.jpg"),
-    Image.network(
-        "http://res.cloudinary.com/ddkz3f3xa/image/upload/v1653370642/am8wfppncpakoyo7n9qt.jpg"),
-    Image.network(
-        "http://res.cloudinary.com/ddkz3f3xa/image/upload/v1653370642/am8wfppncpakoyo7n9qt.jpg"),
-    Image.network(
-        "http://res.cloudinary.com/ddkz3f3xa/image/upload/v1653370642/am8wfppncpakoyo7n9qt.jpg"),
-    Image.network(
-        "http://res.cloudinary.com/ddkz3f3xa/image/upload/v1653370642/am8wfppncpakoyo7n9qt.jpg"),
-    Image.network(
-        "http://res.cloudinary.com/ddkz3f3xa/image/upload/v1653370642/am8wfppncpakoyo7n9qt.jpg"),
-    Image.network(
-        "http://res.cloudinary.com/ddkz3f3xa/image/upload/v1653370642/am8wfppncpakoyo7n9qt.jpg"),
-    Image.network(
-        "http://res.cloudinary.com/ddkz3f3xa/image/upload/v1653370642/am8wfppncpakoyo7n9qt.jpg"),
-    Image.network(
-        "http://res.cloudinary.com/ddkz3f3xa/image/upload/v1653370642/am8wfppncpakoyo7n9qt.jpg"),
-    Image.network(
-        "http://res.cloudinary.com/ddkz3f3xa/image/upload/v1653370642/am8wfppncpakoyo7n9qt.jpg"),
-    Image.network(
-        "http://res.cloudinary.com/ddkz3f3xa/image/upload/v1653370642/am8wfppncpakoyo7n9qt.jpg"),
-  ];
+  late String _comicId;
+  late String _chapterId;
+  Future<dynamic>? _chapterFuture;
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance?.addPostFrameCallback(
+      (_) async {
+        final props =
+            ModalRoute.of(context)!.settings.arguments as ChapterDetailProps;
+
+        setState(
+          () {
+            _comicId = props.comicId;
+            _chapterId = props.chapterId;
+            _chapterFuture = Provider.of<ComicsProvider>(context, listen: false)
+                .getChapter(context,
+                    comicId: props.comicId, chapterId: props.chapterId);
+          },
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    _handleToggleChapterListModal() {
+    final props =
+        ModalRoute.of(context)!.settings.arguments as ChapterDetailProps;
+    final String comicId = props.comicId;
+    final String chapterId = props.chapterId;
+
+    void _handleToggleChapterListModal() {
       showMaterialModalBottomSheet(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8.0),
@@ -80,123 +84,139 @@ class ReadingScreenState extends State<ReadingScreen> {
       );
     }
 
-    return Scaffold(
-      appBar: AppBar(
-          backgroundColor: Colors.black,
-          flexibleSpace: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  ColorConstants.gradientFirstColor,
-                  ColorConstants.gradientSecondColor,
-                ],
-                begin: const FractionalOffset(0.0, 0.0),
-                end: const FractionalOffset(1.0, 0.0),
-              ),
+    return FutureBuilder(
+      future: _chapterFuture,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          final Chapter chapter = snapshot.data as Chapter;
+          return Scaffold(
+            appBar: AppBar(
+                backgroundColor: Colors.black,
+                flexibleSpace: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        ColorConstants.gradientFirstColor,
+                        ColorConstants.gradientSecondColor,
+                      ],
+                      begin: const FractionalOffset(0.0, 0.0),
+                      end: const FractionalOffset(1.0, 0.0),
+                    ),
+                  ),
+                ),
+                leading: IconButton(
+                  icon: const Icon(Icons.arrow_back),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+                title: Center(
+                  child: Text(
+                    chapter.comic?.name ?? "",
+                    style: Theme.of(context)
+                        .textTheme
+                        .headline3
+                        ?.copyWith(color: Colors.white),
+                  ),
+                ),
+                actions: [
+                  IconButton(
+                      icon: const FaIcon(FontAwesomeIcons.list),
+                      onPressed: _handleToggleChapterListModal)
+                ]),
+            body: ListView(
+              children: chapter.pages
+                      ?.map(
+                        (e) => Center(
+                          child: Container(
+                            margin: const EdgeInsets.all(4.0),
+                            child: Image.network(
+                              e,
+                              loadingBuilder:
+                                  (context, child, loadingProgress) {
+                                if (loadingProgress == null) return child;
+                                return Spinner();
+                              },
+                            ),
+                          ),
+                        ),
+                      )
+                      .toList() ??
+                  [],
             ),
-          ),
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
-            onPressed: () => Navigator.of(context).pop(),
-          ),
-          title: Center(
-            child: Text(
-              'Tên truyện',
-              style: Theme.of(context)
-                  .textTheme
-                  .headline3
-                  ?.copyWith(color: Colors.white),
-            ),
-          ),
-          actions: [
-            IconButton(
-                icon: const FaIcon(FontAwesomeIcons.list),
-                onPressed: _handleToggleChapterListModal)
-          ]),
-      body: ListView(
-        scrollDirection: Axis.vertical,
-        children: [
-          // Looping images.
-          for (var item in imageList)
-            Center(
+            bottomNavigationBar: BottomAppBar(
               child: Container(
-                margin: const EdgeInsets.all(4.0),
-                child: item,
-              ),
-            ),
-        ],
-      ),
-      bottomNavigationBar: BottomAppBar(
-        child: Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(8),
-              topRight: Radius.circular(8),
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.25),
-                spreadRadius: 0,
-                blurRadius: 4,
-                offset: Offset(0, -4), // changes position of shadow
-              ),
-            ],
-          ),
-          padding: EdgeInsets.all(8),
-          child: Row(
-            mainAxisSize: MainAxisSize.max,
-            children: <Widget>[
-              InkWell(
-                  onTap: () {},
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      FaIcon(FontAwesomeIcons.arrowLeft),
-                      SizedBox(
-                        height: 4,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(8),
+                    topRight: Radius.circular(8),
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.25),
+                      spreadRadius: 0,
+                      blurRadius: 4,
+                      offset: Offset(0, -4), // changes position of shadow
+                    ),
+                  ],
+                ),
+                padding: EdgeInsets.all(8),
+                child: Row(
+                  mainAxisSize: MainAxisSize.max,
+                  children: <Widget>[
+                    InkWell(
+                        onTap: () {},
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            FaIcon(FontAwesomeIcons.arrowLeft),
+                            SizedBox(
+                              height: 4,
+                            ),
+                            Text(
+                              "Tập trước".toUpperCase(),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .caption
+                                  ?.copyWith(fontWeight: FontWeight.w500),
+                            ),
+                          ],
+                        )),
+                    Expanded(
+                      child: Text(
+                        chapter.name.toUpperCase(),
+                        style: Theme.of(context).textTheme.caption?.copyWith(
+                            color: ColorConstants.solidColor,
+                            fontWeight: FontWeight.w500),
+                        textAlign: TextAlign.center,
+                        maxLines: 2,
                       ),
-                      Text(
-                        "Tập trước".toUpperCase(),
-                        style: Theme.of(context)
-                            .textTheme
-                            .caption
-                            ?.copyWith(fontWeight: FontWeight.w500),
-                      ),
-                    ],
-                  )),
-              Expanded(
-                child: Text(
-                  "Test".toUpperCase(),
-                  style: Theme.of(context).textTheme.caption?.copyWith(
-                      color: ColorConstants.solidColor,
-                      fontWeight: FontWeight.w500),
-                  textAlign: TextAlign.center,
-                  maxLines: 2,
+                    ),
+                    InkWell(
+                        onTap: () {},
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            FaIcon(FontAwesomeIcons.arrowRight),
+                            SizedBox(
+                              height: 4,
+                            ),
+                            Text(
+                              "Tập sau".toUpperCase(),
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .caption
+                                  ?.copyWith(fontWeight: FontWeight.w500),
+                            ),
+                          ],
+                        )),
+                  ],
                 ),
               ),
-              InkWell(
-                  onTap: () {},
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      FaIcon(FontAwesomeIcons.arrowRight),
-                      SizedBox(
-                        height: 4,
-                      ),
-                      Text(
-                        "Tập sau".toUpperCase(),
-                        style: Theme.of(context)
-                            .textTheme
-                            .caption
-                            ?.copyWith(fontWeight: FontWeight.w500),
-                      ),
-                    ],
-                  )),
-            ],
-          ),
-        ),
-      ),
+            ),
+          );
+        }
+        return Spinner();
+      },
     );
   }
 }
