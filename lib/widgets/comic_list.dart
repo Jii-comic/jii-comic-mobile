@@ -36,7 +36,7 @@ class ComicList extends StatelessWidget {
               GestureDetector(
                 onTap: onGetMore,
                 child: Text(
-                  "More",
+                  "Xem thêm",
                   style: TextStyle(
                     fontSize: 12,
                     color: Color(0xffEE9D00),

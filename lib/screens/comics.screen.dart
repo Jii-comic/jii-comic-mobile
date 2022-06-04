@@ -131,7 +131,9 @@ class ComicsScreenState extends State<ComicsScreen> {
                   ),
                 );
               }
-              return Spinner();
+              return Spinner(
+                customColors: [Colors.white, Colors.transparent],
+              );
             },
           ),
         ),
