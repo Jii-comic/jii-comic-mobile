@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:jii_comic_mobile/models/chapter.model.dart';
 import 'package:jii_comic_mobile/models/chapterDetailProps.dart';
+import 'package:jii_comic_mobile/models/comic.model.dart';
 import 'package:jii_comic_mobile/providers/comics.provider.dart';
 import 'package:jii_comic_mobile/utils/color_constants.dart';
 import 'package:jii_comic_mobile/widgets/spinner.dart';
@@ -20,6 +21,7 @@ class ReadingScreenState extends State<ReadingScreen> {
   late String _comicId;
   late String _chapterId;
   Future<dynamic>? _chapterFuture;
+  Future<dynamic>? _comicFuture;
 
   @override
   void initState() {
@@ -37,9 +39,83 @@ class ReadingScreenState extends State<ReadingScreen> {
             _chapterFuture = Provider.of<ComicsProvider>(context, listen: false)
                 .getChapter(context,
                     comicId: props.comicId, chapterId: props.chapterId);
+            _comicFuture = Provider.of<ComicsProvider>(context, listen: false)
+                .getComic(context, comicId: props.comicId);
           },
         );
       },
+    );
+  }
+
+  _goToChapter({required String chapterId}) {
+    Navigator.of(context).pop(); // Pop the modal
+    Navigator.of(context).pushReplacementNamed(ReadingScreen.routeName,
+        arguments: ChapterDetailProps(
+            chapterId: chapterId,
+            comicId: _comicId)); // Replace and push the new chapter
+  }
+
+  _handleToggleChapterListModal() async {
+    final comic = await _comicFuture;
+
+    showMaterialModalBottomSheet(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(8.0),
+      ),
+      context: context,
+      builder: (context) => Container(
+        padding: EdgeInsets.all(16),
+        height: 500,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Danh sách tập",
+              style: Theme.of(context).textTheme.headline3,
+            ),
+            SizedBox(height: 16),
+            Expanded(
+              child: FutureBuilder(
+                future: _comicFuture,
+                builder: (context, snapshot) {
+                  if (snapshot.hasData) {
+                    final comic = snapshot.data as Comic;
+
+                    return ListView(
+                        padding: EdgeInsets.zero,
+                        children: comic.chapters
+                                ?.map(
+                                  (e) => ListTile(
+                                      dense: true,
+                                      onTap: () =>
+                                          _goToChapter(chapterId: e.chapterId),
+                                      title: Text(e.name,
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w600,
+                                              color: e.chapterId == _chapterId
+                                                  ? ColorConstants.solidColor
+                                                  : Colors.black)),
+                                      subtitle: e.chapterId == _chapterId
+                                          ? Text("Đang đọc",
+                                              style: TextStyle(
+                                                fontSize: 12,
+                                                color: Color.fromRGBO(
+                                                    0, 0, 0, 0.6),
+                                              ))
+                                          : null),
+                                )
+                                .toList() ??
+                            []);
+                  }
+                  return Spinner();
+                },
+              ),
+            )
+          ],
+        ),
+      ),
     );
   }
 
@@ -49,40 +125,6 @@ class ReadingScreenState extends State<ReadingScreen> {
         ModalRoute.of(context)!.settings.arguments as ChapterDetailProps;
     final String comicId = props.comicId;
     final String chapterId = props.chapterId;
-
-    void _handleToggleChapterListModal() {
-      showMaterialModalBottomSheet(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8.0),
-        ),
-        context: context,
-        builder: (context) => Container(
-          padding: EdgeInsets.all(16),
-          height: 500,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "Danh sách tập",
-                style: Theme.of(context).textTheme.headline3,
-              ),
-              SizedBox(height: 16),
-              Expanded(
-                child: ListView(
-                  padding: EdgeInsets.zero,
-                  children: const <Widget>[
-                    ListTile(
-                      title: Text('Two-line ListTile'),
-                    ),
-                  ],
-                ),
-              )
-            ],
-          ),
-        ),
-      );
-    }
 
     return FutureBuilder(
       future: _chapterFuture,
@@ -118,7 +160,7 @@ class ReadingScreenState extends State<ReadingScreen> {
                 actions: [
                   IconButton(
                       icon: const FaIcon(FontAwesomeIcons.list),
-                      onPressed: _handleToggleChapterListModal)
+                      onPressed: () => _handleToggleChapterListModal()),
                 ]),
             body: ListView(
               children: chapter.pages

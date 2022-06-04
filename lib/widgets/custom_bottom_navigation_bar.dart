@@ -24,21 +24,21 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
   List<dynamic> _navList = [
     {
       "icon": FontAwesomeIcons.house,
-      "title": "HOME",
+      "title": "Trang chủ",
       "route": HomeScreen.routeName
     },
     {
       "icon": FontAwesomeIcons.list,
-      "title": "MANGA",
+      "title": "Truyện",
       "route": ComicsScreen.routeName
     },
     {
       "icon": FontAwesomeIcons.solidBookmark,
-      "title": "MY LIST",
+      "title": "Theo dõi",
     },
     {
       "icon": FontAwesomeIcons.solidUser,
-      "title": "PROFILE",
+      "title": "Cá nhân",
       "route": ProfileScreen.routeName
     },
   ];

@@ -25,7 +25,8 @@ class DetailScreen extends StatefulWidget {
   State<DetailScreen> createState() => _DetailScreenState();
 }
 
-class _DetailScreenState extends State<DetailScreen> {
+class _DetailScreenState extends State<DetailScreen>
+    with TickerProviderStateMixin {
   late String _comicId;
   Future<dynamic>? _comicFuture;
 
@@ -60,157 +61,198 @@ class _DetailScreenState extends State<DetailScreen> {
   @override
   Widget build(BuildContext context) {
     timeago.setLocaleMessages("vi", timeago.ViMessages());
+    final List<Tab> _tabs = [
+      Tab(text: "Thông tin"),
+      Tab(text: "Bình luận"),
+    ];
+    final _tabController = TabController(vsync: this, length: _tabs.length);
 
     return Scaffold(
-        extendBodyBehindAppBar: true,
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          title: Text("Jii Comic"),
-          centerTitle: true,
-          actions: [
-            IconButton(
-                onPressed: () {}, icon: FaIcon(FontAwesomeIcons.bookmark))
-          ],
-        ),
-        body: FutureBuilder(
-          future: _comicFuture,
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              final Comic _comic = snapshot.data as Comic;
-
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _renderHighlightedComic(comic: _comic),
-                  Expanded(
-                    child: SingleChildScrollView(
-                      padding: EdgeInsets.all(16),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          _renderDescription(_comic.description ?? ""),
-                          SizedBox(height: 16),
-                          Text(
-                            "Danh sách tập",
-                            style: Theme.of(context).textTheme.headline3,
-                          ),
-                          Text(
-                            "Cập nhật lần cuối: ${timeago.format(_comic.updatedAt, locale: 'vi')}",
-                            style: TextStyle(
-                                fontSize: 16,
-                                color: Color.fromRGBO(0, 0, 0, 0.6)),
-                          ),
-                          SizedBox(
-                            height: 16,
-                          ),
-                          _renderChapterList(chapters: _comic.chapters ?? [])
-                        ],
-                      ),
-                    ),
-                  )
-                ],
-              );
-            }
-
-            return Spinner();
-          },
-        ));
+      extendBodyBehindAppBar: true,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        title: Text("Jii Comic"),
+        centerTitle: true,
+        actions: [
+          IconButton(onPressed: () {}, icon: FaIcon(FontAwesomeIcons.bookmark))
+        ],
+      ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _renderHighlightedComic(),
+          Expanded(
+            child: Column(
+              children: [
+                TabBar(
+                  labelColor: ColorConstants.solidColor,
+                  indicatorColor: ColorConstants.solidColor,
+                  controller: _tabController,
+                  tabs: _tabs,
+                ),
+                Expanded(
+                  child: TabBarView(
+                      controller: _tabController,
+                      children: [_renderComicInfo(), Container()]),
+                )
+              ],
+            ),
+          )
+        ],
+      ),
+    );
   }
 
-  Widget _renderHighlightedComic({required Comic comic}) {
-    return ClipRRect(
-      borderRadius: BorderRadius.vertical(bottom: Radius.circular(16)),
-      child: Stack(children: [
-        Positioned.fill(
-          child: Container(
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                fit: BoxFit.cover,
-                image: NetworkImage(comic.thumbnailUrl ??
-                    "http://res.cloudinary.com/ddkz3f3xa/image/upload/v1653370609/cwn2qfht5irwzqw5o7d7.jpg"),
+  Widget _renderComicInfo() {
+    return SingleChildScrollView(
+      child: FutureBuilder(
+        future: _comicFuture,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            final comic = snapshot.data as Comic;
+
+            return SingleChildScrollView(
+              padding: EdgeInsets.symmetric(vertical: 16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _renderDescription(comic.description ?? ""),
+                  SizedBox(height: 16),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Text(
+                      "Danh sách tập",
+                      style: Theme.of(context).textTheme.headline3,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Text(
+                      "Cập nhật lần cuối: ${timeago.format(comic.updatedAt, locale: 'vi')}",
+                      style: TextStyle(
+                          fontSize: 16, color: Color.fromRGBO(0, 0, 0, 0.6)),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 16,
+                  ),
+                  _renderChapterList(chapters: comic.chapters ?? [])
+                ],
               ),
-            ),
-          ),
-        ),
-        Positioned.fill(
-          child: BackdropFilter(
-            child: Container(
-              color: Colors.black.withOpacity(0),
-            ),
-            filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-          ),
-        ),
-        DefaultTextStyle(
-          style: TextStyle(color: Colors.white),
-          child: Container(
-            margin: EdgeInsets.only(top: 88),
-            padding: EdgeInsets.all(16),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  decoration: BoxDecoration(boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.25),
-                      spreadRadius: 0,
-                      blurRadius: 4,
-                      offset: Offset(0, 4), // changes position of shadow
-                    ),
-                  ]),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(10),
-                    ),
-                    child: Image(
-                      width: 140,
-                      height: 211,
+            );
+          }
+          return Spinner();
+        },
+      ),
+    );
+  }
+
+  Widget _renderHighlightedComic() {
+    return FutureBuilder(
+      future: _comicFuture,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          final comic = snapshot.data as Comic;
+
+          return ClipRRect(
+            borderRadius: BorderRadius.vertical(bottom: Radius.circular(16)),
+            child: Stack(children: [
+              Positioned.fill(
+                child: Container(
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
                       fit: BoxFit.cover,
                       image: NetworkImage(comic.thumbnailUrl ??
                           "http://res.cloudinary.com/ddkz3f3xa/image/upload/v1653370609/cwn2qfht5irwzqw5o7d7.jpg"),
                     ),
                   ),
                 ),
-                SizedBox(
-                  width: 16,
+              ),
+              Positioned.fill(
+                child: BackdropFilter(
+                  child: Container(
+                    color: Colors.black.withOpacity(0),
+                  ),
+                  filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
                 ),
-                Expanded(
-                  child: Column(
+              ),
+              DefaultTextStyle(
+                style: TextStyle(color: Colors.white),
+                child: Container(
+                  margin: EdgeInsets.only(top: 88),
+                  padding: EdgeInsets.all(16),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        comic.name,
-                        maxLines: 2,
-                        style: Theme.of(context)
-                            .textTheme
-                            .headline4
-                            ?.copyWith(color: Colors.white),
+                      Container(
+                        decoration: BoxDecoration(boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.25),
+                            spreadRadius: 0,
+                            blurRadius: 4,
+                            offset: Offset(0, 4), // changes position of shadow
+                          ),
+                        ]),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(10),
+                          ),
+                          child: Image(
+                            width: 140,
+                            height: 211,
+                            fit: BoxFit.cover,
+                            image: NetworkImage(comic.thumbnailUrl ??
+                                "http://res.cloudinary.com/ddkz3f3xa/image/upload/v1653370609/cwn2qfht5irwzqw5o7d7.jpg"),
+                          ),
+                        ),
                       ),
-                      SizedBox(height: 16),
-                      Wrap(
-                          spacing: 4,
-                          runSpacing: 4,
-                          children: comic.genres
-                                  ?.map((e) => _renderGenre(label: e.name))
-                                  .toList() ??
-                              []),
-                      SizedBox(height: 16),
-                      PrimaryButton(
-                        child: Text("Bắt đầu đọc".toUpperCase()),
-                        onPressed: () => _goToChapter(
-                            chapterId: comic.chapters?[0].chapterId ?? ""),
+                      SizedBox(
+                        width: 16,
                       ),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              comic.name,
+                              maxLines: 2,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headline4
+                                  ?.copyWith(color: Colors.white),
+                            ),
+                            SizedBox(height: 16),
+                            Wrap(
+                                spacing: 4,
+                                runSpacing: 4,
+                                children: comic.genres
+                                        ?.map(
+                                            (e) => _renderGenre(label: e.name))
+                                        .toList() ??
+                                    []),
+                            SizedBox(height: 16),
+                            PrimaryButton(
+                              child: Text("Bắt đầu đọc".toUpperCase()),
+                              onPressed: () => _goToChapter(
+                                  chapterId:
+                                      comic.chapters?[0].chapterId ?? ""),
+                            ),
+                          ],
+                        ),
+                      )
                     ],
                   ),
-                )
-              ],
-            ),
-          ),
-        ),
-      ]),
+                ),
+              ),
+            ]),
+          );
+        }
+        return Spinner();
+      },
     );
   }
 
@@ -231,24 +273,27 @@ class _DetailScreenState extends State<DetailScreen> {
   }
 
   Widget _renderDescription(String description) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Container(
-          margin: EdgeInsets.only(bottom: 8),
-          child: Text(
-            "Mô tả",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            margin: EdgeInsets.only(bottom: 8),
+            child: Text(
+              "Mô tả",
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+            ),
           ),
-        ),
-        ExpandableText(
-          description,
-          expandText: "Xem thêm",
-          collapseText: "Thu gọn",
-          maxLines: 3,
-          linkColor: ColorConstants.solidColor,
-        )
-      ],
+          ExpandableText(
+            description,
+            expandText: "Xem thêm",
+            collapseText: "Thu gọn",
+            maxLines: 3,
+            linkColor: ColorConstants.solidColor,
+          )
+        ],
+      ),
     );
   }
 

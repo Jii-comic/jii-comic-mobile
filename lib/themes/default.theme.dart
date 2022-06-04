@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:jii_comic_mobile/utils/color_constants.dart';
 
 ThemeData defaultTheme = ThemeData(
+  // Reset default color
+  primarySwatch: Colors.orange,
+  colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.orange),
+
   scaffoldBackgroundColor: Color(0xFFEEEEEE),
   textTheme: TextTheme(
     headline1: TextStyle(
