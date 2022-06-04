@@ -2,9 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:jii_comic_mobile/utils/color_constants.dart';
 
 ThemeData defaultTheme = ThemeData(
+  // Default font family
+  fontFamily: "Roboto",
   // Reset default color
   primarySwatch: Colors.orange,
   colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.orange),
+  appBarTheme: AppBarTheme(
+    foregroundColor: Colors.white,
+    iconTheme: IconThemeData(color: Colors.white),
+  ),
 
   scaffoldBackgroundColor: Color(0xFFEEEEEE),
   textTheme: TextTheme(
