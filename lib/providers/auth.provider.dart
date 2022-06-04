@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:jii_comic_mobile/models/user.model.dart';
 import 'package:jii_comic_mobile/screens/home.screen.dart';
+import 'package:jii_comic_mobile/screens/profile.screen.dart';
 import 'package:jii_comic_mobile/services/user.service.dart';
 
 class AuthProvider extends ChangeNotifier {
@@ -13,9 +14,31 @@ class AuthProvider extends ChangeNotifier {
 
   User? get currentUser => _currentUser;
 
-  void logout() {
-    _currentUser = null;
-    notifyListeners();
+  void logout(context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => AlertDialog(
+        title: Text("Alo?"),
+        content: Text("Bạn thật sự muốn đăng xuất?"),
+        actions: [
+          TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Text('Hủy')),
+          TextButton(
+            child: const Text('Đăng xuất', style: TextStyle(color: Colors.red)),
+            onPressed: () {
+              _currentUser = null;
+              notifyListeners();
+
+              Navigator.of(context).pushNamedAndRemoveUntil(
+                  ProfileScreen.routeName, (Route<dynamic> route) => false);
+            },
+          ),
+        ],
+      ),
+    );
   }
 
   Future<dynamic> login(
@@ -32,7 +55,8 @@ class AuthProvider extends ChangeNotifier {
         _currentUser = User.fromJson(resData["user"]);
         notifyListeners();
 
-        return Navigator.of(context).pushReplacementNamed(HomeScreen.routeName);
+        return Navigator.of(context).pushNamedAndRemoveUntil(
+            HomeScreen.routeName, (Route<dynamic> route) => false);
       case 401:
         return showDialog(
           context: context,

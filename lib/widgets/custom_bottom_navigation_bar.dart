@@ -4,6 +4,7 @@ import 'package:gradient_widgets/gradient_widgets.dart';
 import 'package:jii_comic_mobile/models/comic.model.dart';
 import 'package:jii_comic_mobile/screens/comics.screen.dart';
 import 'package:jii_comic_mobile/screens/home.screen.dart';
+import 'package:jii_comic_mobile/screens/profile.screen.dart';
 
 class CustomBottomNavigationBar extends StatefulWidget {
   final String? activeRoute;
@@ -38,6 +39,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
     {
       "icon": FontAwesomeIcons.solidUser,
       "title": "PROFILE",
+      "route": ProfileScreen.routeName
     },
   ];
 
