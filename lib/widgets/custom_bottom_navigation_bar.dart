@@ -57,8 +57,8 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
         decoration: index == _selectedIndex
             ? BoxDecoration(
                 borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(10),
-                    topRight: Radius.circular(10)),
+                    topLeft: Radius.circular(8),
+                    topRight: Radius.circular(8)),
                 gradient: Gradients.buildGradient(
                     Alignment.centerLeft, Alignment.topRight, [
                   Color(0xffEE9D00),
@@ -66,12 +66,32 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
                 ])
                 // color: index == _selectedItemIndex ? Colors.green : Colors.white,
                 )
-            : BoxDecoration(),
-        // child: FaIcon(
-        //   icon,
-        //   color: index == _selectedIndex ? Colors.black : Colors.grey,
-        // ),
-        child: icon,
+            : BoxDecoration(
+                color: Colors.white,
+              ),
+        child: Center(
+            child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            FaIcon(
+              icon["icon"],
+              color: index == _selectedIndex ? Colors.white : Colors.black,
+              size: 24,
+            ),
+            Padding(
+              padding: EdgeInsets.only(top: 4),
+              child: Text(icon["title"],
+                  style: TextStyle(
+                    color:
+                        index == _selectedIndex ? Colors.white : Colors.black,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  )),
+            ),
+          ],
+        )),
+        // child: icon,
       ),
     );
   }

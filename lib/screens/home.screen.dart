@@ -18,6 +18,12 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
+  List _iconList = [
+    Icons.home,
+    Icons.list,
+    Icons.bookmark,
+    Icons.person,
+  ];
 
   void _onItemTapped(int index) {
     setState(() {
@@ -42,10 +48,22 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       bottomNavigationBar: CustomBottomNavigationBar(
         iconList: [
-          FaIcon(FontAwesomeIcons.home),
-          FaIcon(FontAwesomeIcons.list),
-          FaIcon(FontAwesomeIcons.bookmark),
-          FaIcon(FontAwesomeIcons.person),
+          {
+            "icon": FontAwesomeIcons.house,
+            "title": "HOME",
+          },
+          {
+            "icon": FontAwesomeIcons.list,
+            "title": "MANGA",
+          },
+          {
+            "icon": FontAwesomeIcons.solidBookmark,
+            "title": "MY LIST",
+          },
+          {
+            "icon": FontAwesomeIcons.solidUser,
+            "title": "PROFILE",
+          },
         ],
         onChange: (val) {
           setState(() {
@@ -54,31 +72,6 @@ class _HomeScreenState extends State<HomeScreen> {
         },
         defaultSelectedIndex: 1,
       ),
-      // bottomNavigationBar: BottomNavigationBar(
-      //   type: BottomNavigationBarType.fixed,
-      //   items: [
-      //     BottomNavigationBarItem(
-
-      //       icon: FaIcon(FontAwesomeIcons.home),
-      //       label: "Home",
-      //     ),
-      //     BottomNavigationBarItem(
-      //       icon: FaIcon(FontAwesomeIcons.list),
-      //       label: "Manga",
-      //     ),
-      //     BottomNavigationBarItem(
-      //       icon: FaIcon(FontAwesomeIcons.bookmark),
-      //       label: "My List",
-      //     ),
-      //     BottomNavigationBarItem(
-      //       icon: FaIcon(FontAwesomeIcons.person),
-      //       label: "Profile",
-      //     ),
-      //   ],
-      //   currentIndex: _selectedIndex,
-      //   selectedItemColor: Colors.orange,
-      //   onTap: _onItemTapped,
-      // ),
       body: Column(
         children: [
           _renderHighlightedComic(),
