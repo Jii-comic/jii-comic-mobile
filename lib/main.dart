@@ -33,7 +33,7 @@ class JiiComic extends StatelessWidget {
         child: MaterialApp(
           title: 'Jii Comic',
           theme: defaultTheme,
-          initialRoute: HomeScreen.routeName,
+          initialRoute: ProfileScreen.routeName,
           routes: {
             HomeScreen.routeName: (context) => const HomeScreen(),
             GreetingScreen.routeName: (context) => const GreetingScreen(),
@@ -42,7 +42,8 @@ class JiiComic extends StatelessWidget {
             ReadingScreen.routeName: (context) => const ReadingScreen(),
             DetailScreen.routeName: (context) => const DetailScreen(),
             ProfileScreen.routeName: (context) => const ProfileScreen(),
-            UpdateProfileScreen.routeName: (context) => const UpdateProfileScreen(),
+            UpdateProfileScreen.routeName: (context) =>
+                const UpdateProfileScreen(),
             ComicsScreen.routeName: (context) => const ComicsScreen(),
           },
         ));

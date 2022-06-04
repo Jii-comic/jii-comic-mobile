@@ -28,7 +28,6 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
     Navigator.pushNamed(context, "/profile");
   }
 
-
   @override
   Widget build(BuildContext context) {
     final User? user = Provider.of<AuthProvider>(context).currentUser;
@@ -37,9 +36,8 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
           context: context, email: _email.text, password: _password.text);
     }
 
-
     return Scaffold(
-      extendBodyBehindAppBar: true,
+      // extendBodyBehindAppBar: true,
       backgroundColor: Color(0xFFEEEEEE),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -47,14 +45,16 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
         leading: IconButton(
           icon: FaIcon(FontAwesomeIcons.arrowLeft),
           color: Colors.black,
-          onPressed: (){},
+          onPressed: () {},
         ),
         title: Text("CHỈNH SỬA THÔNG TIN"),
         foregroundColor: Colors.black,
         centerTitle: true,
         actions: [
           IconButton(
-            onPressed: () {}, icon: FaIcon(FontAwesomeIcons.arrowRightFromBracket),color: Colors.black,
+            onPressed: () {},
+            icon: FaIcon(FontAwesomeIcons.arrowRightFromBracket),
+            color: Colors.black,
           )
         ],
       ),
@@ -83,16 +83,18 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
         selectedItemColor: Colors.orange,
         onTap: _onItemTapped,
       ),
-
     );
   }
+
   Widget getBody() {
     var size = MediaQuery.of(context).size;
     return SingleChildScrollView(
       child: Container(
         width: size.width,
         height: size.height,
-        decoration: BoxDecoration(color: Colors.white, ),
+        decoration: BoxDecoration(
+          color: Color(0xffeeeeee),
+        ),
         child: Padding(
           padding: const EdgeInsets.only(left: 30, right: 30, bottom: 100),
           child: Column(
@@ -125,9 +127,7 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                 height: 20,
               ),
               _renderInput(
-                  label: "Tên Hiển Thị",
-                  placeholder: "",
-                  controller: _email),
+                  label: "Tên Hiển Thị", placeholder: "", controller: _email),
               SizedBox(
                 height: 20,
               ),
@@ -144,18 +144,19 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
                 height: 24,
               ),
               PrimaryButton(
-                  child: Text("lưu thay đổi".toUpperCase()), onPressed: (){})
+                  child: Text("lưu thay đổi".toUpperCase()), onPressed: () {})
             ],
           ),
         ),
       ),
     );
   }
+
   Widget _renderInput(
       {required label,
-        placeholder = "",
-        required controller,
-        bool encrypted = false}) {
+      placeholder = "",
+      required controller,
+      bool encrypted = false}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -186,5 +187,4 @@ class _UpdateProfileScreenState extends State<UpdateProfileScreen> {
       ],
     );
   }
-
 }
