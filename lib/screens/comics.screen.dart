@@ -57,7 +57,7 @@ class ComicsScreenState extends State<ComicsScreen> {
     }
 
     return Scaffold(
-      backgroundColor: Theme.of(context).backgroundColor,
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
         flexibleSpace: Container(
           decoration: BoxDecoration(
@@ -101,68 +101,65 @@ class ComicsScreenState extends State<ComicsScreen> {
         ),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(48),
-          child: Padding(
-              padding: const EdgeInsets.all(8),
-              child: FutureBuilder(
-                future: _genresFuture,
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    final List<Genre> genres = snapshot.data as List<Genre>;
-
-                    return Container(
-                      height: 32,
-                      child: ListView.separated(
-                        itemCount: genres.length,
-                        separatorBuilder: (context, index) =>
-                            const SizedBox(width: 8),
-                        scrollDirection: Axis.horizontal,
-                        itemBuilder: (context, index) => Container(
-                          decoration: BoxDecoration(
-                            border: Border.all(width: 1, color: Colors.white),
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(16),
-                            ),
-                          ),
-                          padding:
-                              EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                          child: Text(
-                            genres[index].name,
-                            style: TextStyle(fontSize: 16, color: Colors.white),
-                          ),
-                        ),
-                      ),
-                    );
-                  }
-                  return Spinner();
-                },
-              )),
-        ),
-      ),
-      body: Padding(
-          padding: const EdgeInsets.all(16.0),
           child: FutureBuilder(
-            future: _comicsFuture,
+            future: _genresFuture,
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                final List<Comic> comics = snapshot.data as List<Comic>;
+                final List<Genre> genres = snapshot.data as List<Genre>;
 
-                return GridView.count(
-                  crossAxisCount: 2,
-                  mainAxisSpacing: 16,
-                  crossAxisSpacing: 16,
-                  childAspectRatio: 2 / 3,
-                  children: comics
-                      .map((e) => ComicCard(
-                          comicId: e.comicId,
-                          title: e.name,
-                          thumbnailUrl: e.thumbnailUrl,
-                          desc: e.genres?.map((e) => e.name).join(", ") ?? ""))
-                      .toList(),
+                return Container(
+                  height: 48,
+                  child: ListView.separated(
+                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    itemCount: genres.length,
+                    separatorBuilder: (context, index) =>
+                        const SizedBox(width: 8),
+                    scrollDirection: Axis.horizontal,
+                    itemBuilder: (context, index) => Container(
+                      decoration: BoxDecoration(
+                        border: Border.all(width: 1, color: Colors.white),
+                        borderRadius: BorderRadius.all(
+                          Radius.circular(16),
+                        ),
+                      ),
+                      padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                      child: Text(
+                        genres[index].name,
+                        style: TextStyle(fontSize: 16, color: Colors.white),
+                      ),
+                    ),
+                  ),
                 );
               }
               return Spinner();
             },
-          )),
+          ),
+        ),
+      ),
+      body: FutureBuilder(
+        future: _comicsFuture,
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            final List<Comic> comics = snapshot.data as List<Comic>;
+
+            return GridView.count(
+              padding: EdgeInsets.all(16),
+              crossAxisCount: 2,
+              mainAxisSpacing: 16,
+              crossAxisSpacing: 16,
+              childAspectRatio: 2 / 3,
+              children: comics
+                  .map((e) => ComicCard(
+                      comicId: e.comicId,
+                      title: e.name,
+                      thumbnailUrl: e.thumbnailUrl,
+                      desc: e.genres?.map((e) => e.name).join(", ") ?? ""))
+                  .toList(),
+            );
+          }
+          return Spinner();
+        },
+      ),
       bottomNavigationBar:
           CustomBottomNavigationBar(activeRoute: ComicsScreen.routeName),
     );

@@ -63,7 +63,7 @@ class _DetailScreenState extends State<DetailScreen> {
 
     return Scaffold(
         extendBodyBehindAppBar: true,
-        backgroundColor: Color(0xFFEEEEEE),
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,

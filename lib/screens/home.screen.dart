@@ -117,7 +117,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Expanded(
             child: SingleChildScrollView(
               child: Container(
-                padding: EdgeInsets.all(16),
+                padding: EdgeInsets.symmetric(vertical: 16),
                 child: Column(
                   children: [
                     _renderNewComics(),
@@ -245,14 +245,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ]),
       ),
-    );
-  }
-
-  Widget _renderUserAvatar({required User user}) {
-    return CircleAvatar(
-      backgroundImage: NetworkImage(user.avatarUrl == ""
-          ? "http://via.placeholder.com/48"
-          : user.avatarUrl as String),
     );
   }
 

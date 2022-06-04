@@ -23,10 +23,13 @@ class ComicList extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Flexible(
-              child: Text(
-                title,
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Flexible(
+                child: Text(
+                  title,
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                ),
               ),
             ),
             if (hasMore)
@@ -48,6 +51,7 @@ class ComicList extends StatelessWidget {
         Container(
           height: 204,
           child: ListView.separated(
+            padding: EdgeInsets.symmetric(horizontal: 16),
             itemCount: comics.length,
             separatorBuilder: (context, index) => SizedBox(
               width: 16,

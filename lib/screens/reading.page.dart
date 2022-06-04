@@ -90,6 +90,7 @@ class ReadingScreenState extends State<ReadingScreen> {
         if (snapshot.hasData) {
           final Chapter chapter = snapshot.data as Chapter;
           return Scaffold(
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             appBar: AppBar(
                 backgroundColor: Colors.black,
                 flexibleSpace: Container(
