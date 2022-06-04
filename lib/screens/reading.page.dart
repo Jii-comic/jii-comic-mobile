@@ -111,10 +111,7 @@ class ReadingScreenState extends State<ReadingScreen> {
                 title: Center(
                   child: Text(
                     chapter.comic?.name ?? "",
-                    style: Theme.of(context)
-                        .textTheme
-                        .headline3
-                        ?.copyWith(color: Colors.white),
+                    maxLines: 1,
                   ),
                 ),
                 actions: [

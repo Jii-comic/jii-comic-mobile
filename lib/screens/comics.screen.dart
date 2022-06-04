@@ -70,7 +70,6 @@ class ComicsScreenState extends State<ComicsScreen> {
             ),
           ),
         ),
-        leading: BackButton(),
         title: Container(
           height: 40,
           decoration: BoxDecoration(

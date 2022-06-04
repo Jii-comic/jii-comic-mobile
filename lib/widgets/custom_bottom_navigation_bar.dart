@@ -42,7 +42,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
   ];
 
   _goTo({String? routeName}) {
-    if (routeName == null) {
+    if (routeName == null || widget.activeRoute == routeName) {
       return;
     }
     Navigator.of(context).pushReplacementNamed(routeName);

@@ -9,6 +9,7 @@ import 'package:jii_comic_mobile/models/comicDetailProps.dart';
 import 'package:jii_comic_mobile/models/user.model.dart';
 import 'package:jii_comic_mobile/providers/auth.provider.dart';
 import 'package:jii_comic_mobile/providers/comics.provider.dart';
+import 'package:jii_comic_mobile/screens/comics.screen.dart';
 import 'package:jii_comic_mobile/screens/detail.screen.dart';
 import 'package:jii_comic_mobile/screens/login.screen.dart';
 import 'package:jii_comic_mobile/widgets/comic_list.dart';
@@ -93,17 +94,13 @@ class _HomeScreenState extends State<HomeScreen> {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leading: IconButton(
-          icon: user == null
-              ? FaIcon(FontAwesomeIcons.user)
-              : _renderUserAvatar(user: user),
-          onPressed: _handleUserBtnClick,
-        ),
         title: Text("Jii Comic"),
         centerTitle: true,
         actions: [
           IconButton(
-              onPressed: () {}, icon: FaIcon(FontAwesomeIcons.magnifyingGlass))
+              onPressed: () =>
+                  Navigator.of(context).pushNamed(ComicsScreen.routeName),
+              icon: FaIcon(FontAwesomeIcons.magnifyingGlass))
         ],
       ),
       bottomNavigationBar: CustomBottomNavigationBar(
