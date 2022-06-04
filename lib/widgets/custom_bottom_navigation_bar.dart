@@ -42,7 +42,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
   ];
 
   _goTo({String? routeName}) {
-    if (routeName == null) {
+    if (routeName == null || widget.activeRoute == routeName) {
       return;
     }
     Navigator.of(context).pushReplacementNamed(routeName);
@@ -60,8 +60,11 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: _navList.map((e) => _buildNavBarItem(e)).toList(),
+    return ClipRRect(
+      borderRadius: BorderRadius.vertical(top: Radius.circular(10)),
+      child: Row(
+        children: _navList.map((e) => _buildNavBarItem(e)).toList(),
+      ),
     );
   }
 
@@ -73,13 +76,11 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
         width: MediaQuery.of(context).size.width / _navList.length,
         decoration: navItem["route"] == widget.activeRoute
             ? BoxDecoration(
-                borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(8), topRight: Radius.circular(8)),
                 gradient: Gradients.buildGradient(
                     Alignment.centerLeft, Alignment.topRight, [
-                  Color(0xffEE9D00),
-                  Color(0xffFF0000),
-                ])
+                Color(0xffEE9D00),
+                Color(0xffFF0000),
+              ])
                 // color: index == _selectedItemIndex ? Colors.green : Colors.white,
                 )
             : BoxDecoration(

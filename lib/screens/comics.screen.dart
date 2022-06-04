@@ -57,6 +57,7 @@ class ComicsScreenState extends State<ComicsScreen> {
     }
 
     return Scaffold(
+      backgroundColor: Theme.of(context).backgroundColor,
       appBar: AppBar(
         flexibleSpace: Container(
           decoration: BoxDecoration(
@@ -70,7 +71,6 @@ class ComicsScreenState extends State<ComicsScreen> {
             ),
           ),
         ),
-        leading: BackButton(),
         title: Container(
           height: 40,
           decoration: BoxDecoration(

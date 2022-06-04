@@ -186,7 +186,7 @@ class _DetailScreenState extends State<DetailScreen> {
                         maxLines: 2,
                         style: Theme.of(context)
                             .textTheme
-                            .headline3
+                            .headline4
                             ?.copyWith(color: Colors.white),
                       ),
                       SizedBox(height: 16),
