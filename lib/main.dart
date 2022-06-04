@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:jii_comic_mobile/providers/auth.provider.dart';
+import 'package:jii_comic_mobile/providers/comics.provider.dart';
+import 'package:jii_comic_mobile/screens/comics.screen.dart';
 import 'package:jii_comic_mobile/screens/greeting.screen.dart';
 import 'package:jii_comic_mobile/screens/home.screen.dart';
 import 'package:jii_comic_mobile/screens/login.screen.dart';
+import 'package:jii_comic_mobile/screens/reading.page.dart';
 import 'package:jii_comic_mobile/screens/register.screen.dart';
+import 'package:jii_comic_mobile/themes/default.theme.dart';
 import 'package:jii_comic_mobile/screens/detail.screen.dart';
 import 'package:provider/provider.dart';
 
@@ -18,28 +22,24 @@ class JiiComic extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-        providers: [ChangeNotifierProvider(create: (ctx) => AuthProvider())],
+        providers: [
+          ChangeNotifierProvider(create: (ctx) => AuthProvider()),
+          ChangeNotifierProvider(
+            create: (ctx) => ComicsProvider(),
+          )
+        ],
         child: MaterialApp(
           title: 'Jii Comic',
-          theme: ThemeData(
-            // This is the theme of your application.
-            //
-            // Try running your application with "flutter run". You'll see the
-            // application has a blue toolbar. Then, without quitting the app, try
-            // changing the primarySwatch below to Colors.green and then invoke
-            // "hot reload" (press "r" in the console where you ran "flutter run",
-            // or simply save your changes to "hot reload" in a Flutter IDE).
-            // Notice that the counter didn't reset back to zero; the application
-            // is not restarted.
-            primarySwatch: Colors.blue,
-          ),
+          theme: defaultTheme,
           initialRoute: HomeScreen.routeName,
           routes: {
             HomeScreen.routeName: (context) => const HomeScreen(),
             GreetingScreen.routeName: (context) => const GreetingScreen(),
             LoginScreen.routeName: (context) => const LoginScreen(),
             RegisterScreen.routeName: (context) => const RegisterScreen(),
-            DetailScreen.routeName: (context) => const DetailScreen()
+            ReadingScreen.routeName: (context) => const ReadingScreen(),
+            DetailScreen.routeName: (context) => const DetailScreen(),
+            ComicsScreen.routeName: (context) => const ComicsScreen()
           },
         ));
   }
