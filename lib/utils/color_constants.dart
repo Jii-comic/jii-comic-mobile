@@ -15,4 +15,6 @@ class ColorConstants {
   static Color gradientFirstColor = hexToColor('#EE9D00');
   static Color gradientSecondColor = hexToColor('#FF0000');
   static Color solidColor = hexToColor('#F65600');
+  static Color disabledColor = Colors.black.withOpacity(0.38);
+  static Color regularColor = Colors.black;
 }

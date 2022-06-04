@@ -11,22 +11,26 @@ import 'package:jii_comic_mobile/services/genres.service.dart';
 import 'package:jii_comic_mobile/utils/api_constants.dart';
 import 'package:jii_comic_mobile/utils/color_constants.dart';
 
-class ComicsProvider extends ChangeNotifier {
+class ChaptersProvider extends ChangeNotifier {
   ComicsService comicsService = ComicsService();
-  GenresService genresService = GenresService();
+  String? _nextChapterId;
+  String? _prevChapterId;
 
-  Future<List<Comic>> getComics(
-      {String? order, String? orderBy, int? limit, String? query}) async {
-    final res = await comicsService.getComics(
-        query: query, order: order, orderBy: orderBy, limit: limit);
+  String? get prevChapterId => _prevChapterId;
+  String? get nextChapterId => _nextChapterId;
+
+  Future<List<Chapter>> getChapters({required String comicId}) async {
+    final res = await comicsService.getChapters(comicId: comicId);
 
     final resData = json.decode(res.body);
 
-    return List.from(resData).map((e) => Comic.fromJson(e)).toList();
+    return List.from(resData).map((e) => Chapter.fromJson(e)).toList();
   }
 
-  Future<dynamic> getComic(context, {required String comicId}) async {
-    final res = await comicsService.getComic(comicId: comicId);
+  Future<dynamic> getChapter(context,
+      {required String comicId, required String chapterId}) async {
+    final res = await comicsService.getChapter(context,
+        comicId: comicId, chapterId: chapterId);
     final resData = json.decode(res.body);
 
     if (resData == "") {
@@ -36,7 +40,7 @@ class ComicsProvider extends ChangeNotifier {
         context: context,
         builder: (BuildContext context) => AlertDialog(
           title: Text("Thông báo"),
-          content: Text("Không tìm thấy truyện!"),
+          content: Text("Không tìm thấy tập!"),
           actions: [
             TextButton(
               child: Text(
@@ -51,14 +55,11 @@ class ComicsProvider extends ChangeNotifier {
         ),
       );
     }
-    return Comic.fromJson(resData);
-  }
 
-  Future<List<Genre>> getGenres() async {
-    final res = await genresService.getGenres();
+    _nextChapterId = resData["nextChapter"]?["chapter_id"];
+    _prevChapterId = resData["prevChapter"]?["chapter_id"];
+    notifyListeners();
 
-    final resData = json.decode(res.body);
-
-    return List.from(resData).map((e) => Genre.fromJson(e)).toList();
+    return Chapter.fromJson(resData["currentChapter"]);
   }
 }

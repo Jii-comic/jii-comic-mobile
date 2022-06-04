@@ -7,7 +7,8 @@ class AuthRoutes {
   static const register = "/auth/register";
   static const getComics = "/comics";
   static String getComic({required String comicId}) => "/comics/$comicId";
-  static String getChapters({required String comicId}) => "/comics/$comicId";
+  static String getChapters({required String comicId}) =>
+      "/comics/$comicId/chapters";
   static String getChapter(
           {required String comicId, required String chapterId}) =>
       "/comics/$comicId/chapters/$chapterId";

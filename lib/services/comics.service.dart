@@ -43,7 +43,24 @@ class ComicsService {
     return response;
   }
 
-  Future<Response> getChapter(
+  Future<Response> getChapters({required String comicId}) async {
+    final url =
+        Uri.parse("$API_HOST${AuthRoutes.getChapters(comicId: comicId)}");
+
+    print(url.toString());
+
+    final Response response = await get(
+      url,
+      headers: {"Content-Type": "application/json", "api-key": API_KEY},
+    );
+
+    print('Status code: ${response.statusCode}');
+    print("Data: ${response.body}");
+
+    return response;
+  }
+
+  Future<Response> getChapter(context,
       {required String comicId, required String chapterId}) async {
     final url = Uri.parse(
         "$API_HOST${AuthRoutes.getChapter(comicId: comicId, chapterId: chapterId)}");

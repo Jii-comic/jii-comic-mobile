@@ -3,6 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:jii_comic_mobile/models/chapter.model.dart';
 import 'package:jii_comic_mobile/models/chapterDetailProps.dart';
 import 'package:jii_comic_mobile/models/comic.model.dart';
+import 'package:jii_comic_mobile/providers/chapter.provider.dart';
 import 'package:jii_comic_mobile/providers/comics.provider.dart';
 import 'package:jii_comic_mobile/utils/color_constants.dart';
 import 'package:jii_comic_mobile/widgets/spinner.dart';
@@ -18,10 +19,11 @@ class ReadingScreen extends StatefulWidget {
 }
 
 class ReadingScreenState extends State<ReadingScreen> {
+  late String _comicName;
   late String _comicId;
   late String _chapterId;
   Future<dynamic>? _chapterFuture;
-  Future<dynamic>? _comicFuture;
+  Future<dynamic>? _chapterListFuture;
 
   @override
   void initState() {
@@ -36,11 +38,14 @@ class ReadingScreenState extends State<ReadingScreen> {
           () {
             _comicId = props.comicId;
             _chapterId = props.chapterId;
-            _chapterFuture = Provider.of<ComicsProvider>(context, listen: false)
-                .getChapter(context,
-                    comicId: props.comicId, chapterId: props.chapterId);
-            _comicFuture = Provider.of<ComicsProvider>(context, listen: false)
-                .getComic(context, comicId: props.comicId);
+            _comicName = props.comicName;
+            _chapterFuture =
+                Provider.of<ChaptersProvider>(context, listen: false)
+                    .getChapter(context,
+                        comicId: props.comicId, chapterId: props.chapterId);
+            _chapterListFuture =
+                Provider.of<ChaptersProvider>(context, listen: false)
+                    .getChapters(comicId: props.comicId);
           },
         );
       },
@@ -49,15 +54,14 @@ class ReadingScreenState extends State<ReadingScreen> {
 
   _goToChapter({required String chapterId}) {
     Navigator.of(context).pop(); // Pop the modal
-    Navigator.of(context).pushReplacementNamed(ReadingScreen.routeName,
-        arguments: ChapterDetailProps(
-            chapterId: chapterId,
-            comicId: _comicId)); // Replace and push the new chapter
+    Navigator.of(context).pushReplacementNamed(
+      ReadingScreen.routeName,
+      arguments: ChapterDetailProps(
+          chapterId: chapterId, comicId: _comicId, comicName: _comicName),
+    ); // Replace and push the new chapter
   }
 
   _handleToggleChapterListModal() async {
-    final comic = await _comicFuture;
-
     showMaterialModalBottomSheet(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(8.0),
@@ -77,37 +81,35 @@ class ReadingScreenState extends State<ReadingScreen> {
             SizedBox(height: 16),
             Expanded(
               child: FutureBuilder(
-                future: _comicFuture,
+                future: _chapterListFuture,
                 builder: (context, snapshot) {
                   if (snapshot.hasData) {
-                    final comic = snapshot.data as Comic;
+                    final chapters = snapshot.data as List<Chapter>;
 
                     return ListView(
                         padding: EdgeInsets.zero,
-                        children: comic.chapters
-                                ?.map(
-                                  (e) => ListTile(
-                                      dense: true,
-                                      onTap: () =>
-                                          _goToChapter(chapterId: e.chapterId),
-                                      title: Text(e.name,
+                        children: chapters
+                            .map(
+                              (e) => ListTile(
+                                  dense: true,
+                                  onTap: () =>
+                                      _goToChapter(chapterId: e.chapterId),
+                                  title: Text(e.name,
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600,
+                                          color: e.chapterId == _chapterId
+                                              ? ColorConstants.solidColor
+                                              : Colors.black)),
+                                  subtitle: e.chapterId == _chapterId
+                                      ? Text("Đang đọc",
                                           style: TextStyle(
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w600,
-                                              color: e.chapterId == _chapterId
-                                                  ? ColorConstants.solidColor
-                                                  : Colors.black)),
-                                      subtitle: e.chapterId == _chapterId
-                                          ? Text("Đang đọc",
-                                              style: TextStyle(
-                                                fontSize: 12,
-                                                color: Color.fromRGBO(
-                                                    0, 0, 0, 0.6),
-                                              ))
-                                          : null),
-                                )
-                                .toList() ??
-                            []);
+                                            fontSize: 12,
+                                            color: Color.fromRGBO(0, 0, 0, 0.6),
+                                          ))
+                                      : null),
+                            )
+                            .toList());
                   }
                   return Spinner();
                 },
@@ -125,6 +127,10 @@ class ReadingScreenState extends State<ReadingScreen> {
         ModalRoute.of(context)!.settings.arguments as ChapterDetailProps;
     final String comicId = props.comicId;
     final String chapterId = props.chapterId;
+    final String? nextChapterId =
+        Provider.of<ChaptersProvider>(context, listen: true).nextChapterId;
+    final String? prevChapterId =
+        Provider.of<ChaptersProvider>(context, listen: true).prevChapterId;
 
     return FutureBuilder(
       future: _chapterFuture,
@@ -153,7 +159,7 @@ class ReadingScreenState extends State<ReadingScreen> {
                 ),
                 title: Center(
                   child: Text(
-                    chapter.comic?.name ?? "",
+                    _comicName,
                     maxLines: 1,
                   ),
                 ),
@@ -203,24 +209,10 @@ class ReadingScreenState extends State<ReadingScreen> {
                 child: Row(
                   mainAxisSize: MainAxisSize.max,
                   children: <Widget>[
-                    InkWell(
-                        onTap: () {},
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            FaIcon(FontAwesomeIcons.arrowLeft),
-                            SizedBox(
-                              height: 4,
-                            ),
-                            Text(
-                              "Tập trước".toUpperCase(),
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .caption
-                                  ?.copyWith(fontWeight: FontWeight.w500),
-                            ),
-                          ],
-                        )),
+                    _renderChapterNavigationBtn(
+                        chapterId: prevChapterId,
+                        icon: FontAwesomeIcons.arrowLeft,
+                        label: "tập trước"),
                     Expanded(
                       child: Text(
                         chapter.name.toUpperCase(),
@@ -231,24 +223,10 @@ class ReadingScreenState extends State<ReadingScreen> {
                         maxLines: 2,
                       ),
                     ),
-                    InkWell(
-                        onTap: () {},
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            FaIcon(FontAwesomeIcons.arrowRight),
-                            SizedBox(
-                              height: 4,
-                            ),
-                            Text(
-                              "Tập sau".toUpperCase(),
-                              style: Theme.of(context)
-                                  .textTheme
-                                  .caption
-                                  ?.copyWith(fontWeight: FontWeight.w500),
-                            ),
-                          ],
-                        )),
+                    _renderChapterNavigationBtn(
+                        chapterId: nextChapterId,
+                        icon: FontAwesomeIcons.arrowRight,
+                        label: "tập sau")
                   ],
                 ),
               ),
@@ -258,5 +236,38 @@ class ReadingScreenState extends State<ReadingScreen> {
         return Spinner();
       },
     );
+  }
+
+  Widget _renderChapterNavigationBtn(
+      {required String? chapterId,
+      required IconData icon,
+      required String label}) {
+    final bool disabled = chapterId == null;
+
+    return InkWell(
+        onTap: () => {
+              if (!disabled) {_goToChapter(chapterId: chapterId)}
+            },
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            FaIcon(
+              icon,
+              color: !disabled
+                  ? ColorConstants.regularColor
+                  : ColorConstants.disabledColor,
+            ),
+            SizedBox(
+              height: 4,
+            ),
+            Text(label.toUpperCase(),
+                style: Theme.of(context).textTheme.caption?.copyWith(
+                      fontWeight: FontWeight.w500,
+                      color: !disabled
+                          ? ColorConstants.regularColor
+                          : ColorConstants.disabledColor,
+                    )),
+          ],
+        ));
   }
 }

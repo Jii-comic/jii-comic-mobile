@@ -227,7 +227,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                     [],
                               ),
                               SizedBox(height: 16),
-                              Text("Chapter: 13 / 21"),
+                              Text(
+                                  "${_highlightedComic?.chapters?.length ?? 0} tập"),
                               // Spacer(),
                               SizedBox(height: 16),
                               PrimaryButton(

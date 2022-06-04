@@ -30,13 +30,17 @@ class _DetailScreenState extends State<DetailScreen>
   late String _comicId;
   Future<dynamic>? _comicFuture;
 
-  void _goToChapter({required String chapterId}) {
+  void _goToChapter({required String chapterId}) async {
     if (chapterId == "") {
       return;
     }
+
     Navigator.of(context).pushNamed(
       ReadingScreen.routeName,
-      arguments: ChapterDetailProps(chapterId: chapterId, comicId: _comicId),
+      arguments: ChapterDetailProps(
+          chapterId: chapterId,
+          comicId: _comicId,
+          comicName: (await _comicFuture as Comic).name),
     );
   }
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:jii_comic_mobile/providers/auth.provider.dart';
+import 'package:jii_comic_mobile/providers/chapter.provider.dart';
 import 'package:jii_comic_mobile/providers/comics.provider.dart';
 import 'package:jii_comic_mobile/screens/comics.screen.dart';
 import 'package:jii_comic_mobile/screens/greeting.screen.dart';
@@ -28,6 +29,9 @@ class JiiComic extends StatelessWidget {
           ChangeNotifierProvider(create: (ctx) => AuthProvider()),
           ChangeNotifierProvider(
             create: (ctx) => ComicsProvider(),
+          ),
+          ChangeNotifierProvider(
+            create: (ctx) => ChaptersProvider(),
           )
         ],
         child: MaterialApp(
