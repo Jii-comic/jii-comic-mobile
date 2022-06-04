@@ -5,17 +5,23 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:jii_comic_mobile/models/chapter.model.dart';
 import 'package:jii_comic_mobile/models/comic.model.dart';
+import 'package:jii_comic_mobile/models/genre.model.dart';
 import 'package:jii_comic_mobile/services/comics.service.dart';
+import 'package:jii_comic_mobile/services/genres.service.dart';
 import 'package:jii_comic_mobile/utils/api_constants.dart';
 import 'package:jii_comic_mobile/utils/color_constants.dart';
 
 class ComicsProvider extends ChangeNotifier {
   ComicsService comicsService = ComicsService();
+  GenresService genresService = GenresService();
+
   Future<List<Comic>> getComics(
-      {String? order, String? orderBy, int? limit}) async {
+      {String? order, String? orderBy, int? limit, String? query}) async {
     final res = await comicsService.getComics(
-        order: order, orderBy: orderBy, limit: limit);
+        query: query, order: order, orderBy: orderBy, limit: limit);
+
     final resData = json.decode(res.body);
+
     return List.from(resData).map((e) => Comic.fromJson(e)).toList();
   }
 
@@ -77,5 +83,13 @@ class ComicsProvider extends ChangeNotifier {
       );
     }
     return Chapter.fromJson(resData);
+  }
+
+  Future<List<Genre>> getGenres() async {
+    final res = await genresService.getGenres();
+
+    final resData = json.decode(res.body);
+
+    return List.from(resData).map((e) => Genre.fromJson(e)).toList();
   }
 }

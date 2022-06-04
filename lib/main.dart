@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:jii_comic_mobile/providers/auth.provider.dart';
 import 'package:jii_comic_mobile/providers/comics.provider.dart';
+import 'package:jii_comic_mobile/screens/comics.screen.dart';
 import 'package:jii_comic_mobile/screens/greeting.screen.dart';
 import 'package:jii_comic_mobile/screens/home.screen.dart';
 import 'package:jii_comic_mobile/screens/login.screen.dart';
@@ -30,14 +31,15 @@ class JiiComic extends StatelessWidget {
         child: MaterialApp(
           title: 'Jii Comic',
           theme: defaultTheme,
-          initialRoute: HomeScreen.routeName,
+          initialRoute: ComicsScreen.routeName,
           routes: {
             HomeScreen.routeName: (context) => const HomeScreen(),
             GreetingScreen.routeName: (context) => const GreetingScreen(),
             LoginScreen.routeName: (context) => const LoginScreen(),
             RegisterScreen.routeName: (context) => const RegisterScreen(),
             ReadingScreen.routeName: (context) => const ReadingScreen(),
-            DetailScreen.routeName: (context) => const DetailScreen()
+            DetailScreen.routeName: (context) => const DetailScreen(),
+            ComicsScreen.routeName: (context) => const ComicsScreen()
           },
         ));
   }

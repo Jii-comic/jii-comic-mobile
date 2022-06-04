@@ -26,13 +26,12 @@ class Comic {
   Comic.fromJson(Map<String, dynamic> json) {
     comicId = json['comic_id'];
     name = json['name'];
-    description = json['description'];
+    description = json['description'] ?? "";
     thumbnailUrl = json['thumbnailUrl'];
-    coverUrl = null;
+    coverUrl = json["coverUrl"];
     createdAt = DateTime.parse(json['created_at']);
     updatedAt = DateTime.parse(json['updated_at']);
 
-    print(json["genres"]);
     if (json['genres'] != null) {
       genres = List.from(json['genres']).map((e) => Genre.fromJson(e)).toList();
     }

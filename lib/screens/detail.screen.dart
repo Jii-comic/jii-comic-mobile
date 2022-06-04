@@ -91,7 +91,7 @@ class _DetailScreenState extends State<DetailScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          _renderDescription(_comic?.description ?? ""),
+                          _renderDescription(_comic.description ?? ""),
                           SizedBox(height: 16),
                           Text(
                             "Danh sách tập",

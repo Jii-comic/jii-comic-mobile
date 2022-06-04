@@ -31,8 +31,8 @@ class ComicCard extends StatelessWidget {
         child: Stack(
           children: [
             Container(
-              width: 136,
-              height: 204,
+              width: double.infinity,
+              height: double.infinity,
               decoration: BoxDecoration(
                 image: DecorationImage(
                   fit: BoxFit.cover,

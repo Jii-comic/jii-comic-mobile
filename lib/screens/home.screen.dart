@@ -25,10 +25,11 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  List<Comic>? _recentUpdatedComics;
   int _selectedIndex = 0;
   Comic? _highlightedComic = null;
 
-  _highlightComic({required Comic comic}) => () {
+  _highlightComic({Comic? comic}) => () {
         setState(() {
           _highlightedComic = comic;
         });
@@ -45,6 +46,36 @@ class _HomeScreenState extends State<HomeScreen> {
           arguments: ComicDetailProps(comicId: comicId),
         );
       };
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    WidgetsBinding.instance?.addPostFrameCallback(
+      (_) {
+        setState(
+          () {
+            Provider.of<ComicsProvider>(context, listen: false)
+                .getComics(limit: 10, orderBy: "updated_at", order: "DESC")
+                .then(
+              (comics) {
+                setState(
+                  () {
+                    _recentUpdatedComics = comics;
+
+                    if (comics.length > 0) {
+                      _highlightedComic = comics[0];
+                    }
+                  },
+                );
+              },
+            );
+          },
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -288,28 +319,21 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _renderRecentUpdatedComics() {
-    return FutureBuilder(
-      future: Provider.of<ComicsProvider>(context)
-          .getComics(limit: 10, orderBy: "updated_at", order: "DESC"),
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          final List<Comic> comics = snapshot.data as List<Comic>;
-          return ListView.separated(
-            itemCount: comics.length,
+    return _recentUpdatedComics == null
+        ? Spinner()
+        : ListView.separated(
+            itemCount: _recentUpdatedComics?.length ?? 0,
             scrollDirection: Axis.horizontal,
             itemBuilder: (context, index) => IconButton(
-              onPressed: _highlightComic(comic: comics[index]),
+              onPressed: _highlightComic(comic: _recentUpdatedComics?[index]),
               icon: CircleAvatar(
-                  backgroundImage: NetworkImage(comics[index].thumbnailUrl ??
+                  backgroundImage: NetworkImage(_recentUpdatedComics?[index]
+                          .thumbnailUrl ??
                       "http://res.cloudinary.com/ddkz3f3xa/image/upload/v1653370609/cwn2qfht5irwzqw5o7d7.jpg")),
             ),
             separatorBuilder: (context, index) => SizedBox(
               width: 4,
             ),
           );
-        }
-        return Container();
-      },
-    );
   }
 }

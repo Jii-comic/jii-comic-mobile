@@ -57,11 +57,15 @@ class ComicList extends StatelessWidget {
             itemBuilder: (context, index) {
               final List<String> genres =
                   comics[index].genres?.map((item) => item.name).toList() ?? [];
-              return ComicCard(
-                comicId: comics[index].comicId,
-                title: comics[index].name,
-                desc: genres.join(", "),
-                thumbnailUrl: comics[index].thumbnailUrl,
+              return Container(
+                width: 136,
+                height: 204,
+                child: ComicCard(
+                  comicId: comics[index].comicId,
+                  title: comics[index].name,
+                  desc: genres.join(", "),
+                  thumbnailUrl: comics[index].thumbnailUrl,
+                ),
               );
             },
           ),
