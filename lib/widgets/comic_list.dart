@@ -1,11 +1,17 @@
 import 'package:flutter/cupertino.dart';
+import 'package:jii_comic_mobile/models/comic.model.dart';
 import 'package:jii_comic_mobile/widgets/comic_card.dart';
 
 class ComicList extends StatelessWidget {
   const ComicList(
-      {Key? key, required this.title, required this.hasMore, this.onGetMore})
+      {Key? key,
+      required this.title,
+      required this.hasMore,
+      this.onGetMore,
+      this.comics = const []})
       : super(key: key);
 
+  final List<Comic> comics;
   final String title;
   final bool hasMore;
   final void Function()? onGetMore;
@@ -17,10 +23,13 @@ class ComicList extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Flexible(
-              child: Text(
-                title,
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Flexible(
+                child: Text(
+                  title,
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+                ),
               ),
             ),
             if (hasMore)
@@ -42,14 +51,27 @@ class ComicList extends StatelessWidget {
         Container(
           height: 204,
           child: ListView.separated(
-            itemCount: 4,
+            padding: EdgeInsets.symmetric(horizontal: 16),
+            itemCount: comics.length,
             separatorBuilder: (context, index) => SizedBox(
               width: 16,
             ),
             shrinkWrap: true,
             scrollDirection: Axis.horizontal,
-            itemBuilder: (context, index) =>
-                ComicCard(title: "Spy X Family", desc: "Slice of life, comedy"),
+            itemBuilder: (context, index) {
+              final List<String> genres =
+                  comics[index].genres?.map((item) => item.name).toList() ?? [];
+              return Container(
+                width: 136,
+                height: 204,
+                child: ComicCard(
+                  comicId: comics[index].comicId,
+                  title: comics[index].name,
+                  desc: genres.join(", "),
+                  thumbnailUrl: comics[index].thumbnailUrl,
+                ),
+              );
+            },
           ),
         ),
       ],

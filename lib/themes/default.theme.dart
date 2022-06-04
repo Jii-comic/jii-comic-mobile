@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:jii_comic_mobile/utils/color_constants.dart';
 
 ThemeData defaultTheme = ThemeData(
+  scaffoldBackgroundColor: Color(0xFFEEEEEE),
   textTheme: TextTheme(
     headline1: TextStyle(
       fontSize: 40,

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:jii_comic_mobile/providers/auth.provider.dart';
+import 'package:jii_comic_mobile/providers/comics.provider.dart';
+import 'package:jii_comic_mobile/screens/comics.screen.dart';
 import 'package:jii_comic_mobile/screens/greeting.screen.dart';
 import 'package:jii_comic_mobile/screens/home.screen.dart';
 import 'package:jii_comic_mobile/screens/login.screen.dart';
@@ -22,11 +24,16 @@ class JiiComic extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-        providers: [ChangeNotifierProvider(create: (ctx) => AuthProvider())],
+        providers: [
+          ChangeNotifierProvider(create: (ctx) => AuthProvider()),
+          ChangeNotifierProvider(
+            create: (ctx) => ComicsProvider(),
+          )
+        ],
         child: MaterialApp(
           title: 'Jii Comic',
           theme: defaultTheme,
-          initialRoute: ProfileScreen.routeName,
+          initialRoute: HomeScreen.routeName,
           routes: {
             HomeScreen.routeName: (context) => const HomeScreen(),
             GreetingScreen.routeName: (context) => const GreetingScreen(),
@@ -35,7 +42,8 @@ class JiiComic extends StatelessWidget {
             ReadingScreen.routeName: (context) => const ReadingScreen(),
             DetailScreen.routeName: (context) => const DetailScreen(),
             ProfileScreen.routeName: (context) => const ProfileScreen(),
-            UpdateProfileScreen.routeName: (context) => const UpdateProfileScreen()
+            UpdateProfileScreen.routeName: (context) => const UpdateProfileScreen(),
+            ComicsScreen.routeName: (context) => const ComicsScreen(),
           },
         ));
   }
