@@ -43,6 +43,7 @@ dependencies:
   test: ^1.19.5
   timeago: ^3.2.2
   expandable_text: ^2.3.0
+  image_picker: ^0.8.5+3
 
 
 dev_dependencies:
