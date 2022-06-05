@@ -12,6 +12,7 @@ import 'package:jii_comic_mobile/screens/register.screen.dart';
 import 'package:jii_comic_mobile/themes/default.theme.dart';
 import 'package:jii_comic_mobile/screens/detail.screen.dart';
 import 'package:jii_comic_mobile/screens/updateProfile.screen.dart';
+import 'package:jii_comic_mobile/screens/following.screen.dart';
 import 'package:provider/provider.dart';
 
 void main() {
@@ -49,6 +50,7 @@ class JiiComic extends StatelessWidget {
             UpdateProfileScreen.routeName: (context) =>
                 const UpdateProfileScreen(),
             ComicsScreen.routeName: (context) => const ComicsScreen(),
+            FollowingComicsScreen.routeName: (context) => const FollowingComicsScreen(),
           },
         ));
   }
