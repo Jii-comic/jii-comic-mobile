@@ -7,6 +7,7 @@ import 'package:jii_comic_mobile/models/user.model.dart';
 import 'package:jii_comic_mobile/screens/home.screen.dart';
 import 'package:jii_comic_mobile/screens/profile.screen.dart';
 import 'package:jii_comic_mobile/services/user.service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthProvider extends ChangeNotifier {
   final UserService userService = UserService();
@@ -17,7 +18,36 @@ class AuthProvider extends ChangeNotifier {
 
   String? get accessToken => _accessToken;
 
-  void removeSession() {
+  AuthProvider() {
+    print("Trying to re-login...");
+    loginUsingStoredToken();
+  }
+
+  void loginUsingStoredToken() async {
+    final _prefs = await SharedPreferences.getInstance();
+    final accessToken = _prefs.getString("accessToken");
+
+    print("Last session's token: $accessToken");
+
+    if (accessToken != null) {
+      final res =
+          await userService.loginUsingAccessToken(accessToken: accessToken);
+      final resData = json.decode(res.body);
+
+      switch (res.statusCode) {
+        case (201):
+          _currentUser = User.fromJson(resData);
+          _accessToken = accessToken;
+          return notifyListeners();
+        default:
+          return;
+      }
+    }
+  }
+
+  void removeSession() async {
+    final _prefs = await SharedPreferences.getInstance();
+    _prefs.remove("accessToken");
     _currentUser = null;
     _accessToken = null;
 
@@ -41,8 +71,7 @@ class AuthProvider extends ChangeNotifier {
             onPressed: () {
               removeSession();
 
-              Navigator.of(context).pushNamedAndRemoveUntil(
-                  ProfileScreen.routeName, (Route<dynamic> route) => false);
+              Navigator.of(context).pop();
             },
           ),
         ],
@@ -63,10 +92,18 @@ class AuthProvider extends ChangeNotifier {
       case 200:
         _currentUser = User.fromJson(resData["user"]);
         _accessToken = resData["access_token"];
+
+        if (_accessToken != null) {
+          final _prefs = await SharedPreferences.getInstance();
+          _prefs.setString("accessToken", _accessToken!);
+
+          print(
+              "Saved token into Shared Preferences: ${_prefs.getString("accessToken")}");
+        }
+
         notifyListeners();
 
-        return Navigator.of(context).pushNamedAndRemoveUntil(
-            HomeScreen.routeName, (Route<dynamic> route) => false);
+        return Navigator.of(context).pop();
       case 401:
         return showDialog(
           context: context,

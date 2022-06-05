@@ -4,6 +4,7 @@ const API_KEY = "bc733e58-cdbd-4bc9-966b-d46baedb5dc1";
 
 class ApiRoutes {
   static const login = "/auth/login";
+  static const verifyToken = "/auth/verify-token";
   static const register = "/auth/register";
   static const getComics = "/comics";
   static String getComic({required String comicId}) => "/comics/$comicId";

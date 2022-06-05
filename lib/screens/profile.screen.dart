@@ -24,39 +24,14 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  User? _currentUser;
-  int _selectedIndex = 0;
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-    Navigator.pushNamed(context, "/updateProfile");
-  }
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-
-    WidgetsBinding.instance?.addPostFrameCallback(
-      (_) {
-        setState(
-          () {
-            _currentUser =
-                Provider.of<AuthProvider>(context, listen: false).currentUser;
-          },
-        );
-      },
-    );
-  }
-
   _goTo({required String route}) {
     Navigator.of(context).pushNamed(route);
   }
 
   @override
   Widget build(BuildContext context) {
+    User? currentUser = Provider.of<AuthProvider>(context).currentUser;
+
     void _handleLogout() {
       Provider.of<AuthProvider>(context, listen: false).logout(context);
     }
@@ -69,7 +44,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         elevation: 0,
         foregroundColor: Colors.black,
         actions: [
-          if (_currentUser != null)
+          if (currentUser != null)
             IconButton(
               onPressed: _handleLogout,
               icon: FaIcon(
@@ -84,8 +59,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
-          children: _currentUser != null
-              ? [_renderUser(), _renderUserSettings()]
+          children: currentUser != null
+              ? [_renderUser(user: currentUser), _renderUserSettings()]
               : [_renderGuest()],
         ),
       ),
@@ -129,7 +104,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  Widget _renderUser() {
+  Widget _renderUser({required User user}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -149,13 +124,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                _currentUser?.name ?? "",
+                user.name,
                 style: TextStyle(fontSize: 24, fontWeight: FontWeight.w500),
               ),
               Padding(
                 padding: EdgeInsets.only(top: 4),
                 child: Text(
-                  _currentUser?.email ?? "",
+                  user.email,
                   style: TextStyle(
                       fontSize: 12, color: Color.fromRGBO(0, 0, 0, 0.38)),
                 ),

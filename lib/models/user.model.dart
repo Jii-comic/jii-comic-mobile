@@ -1,10 +1,14 @@
 class User {
-  String? userId;
-  String? email;
-  String? name;
+  String userId;
+  String email;
+  String name;
   String? avatarUrl;
 
-  User({this.userId, this.email, this.name, this.avatarUrl});
+  User(
+      {required this.userId,
+      required this.email,
+      required this.name,
+      this.avatarUrl});
 
   factory User.fromJson(dynamic json) {
     return User(
