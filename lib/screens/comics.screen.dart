@@ -34,10 +34,10 @@ class ComicsScreenState extends State<ComicsScreen> {
     WidgetsBinding.instance?.addPostFrameCallback(
       (_) {
         setState(() {
-          _comicsFuture = Provider.of<ComicsProvider>(context, listen: false)
+          _comicsFuture = context
+              .read<ComicsProvider>()
               .getComics(orderBy: "created_at", order: "DESC");
-          _genresFuture =
-              Provider.of<ComicsProvider>(context, listen: false).getGenres();
+          _genresFuture = context.read<ComicsProvider>().getGenres();
         });
       },
     );
@@ -47,12 +47,11 @@ class ComicsScreenState extends State<ComicsScreen> {
   Widget build(BuildContext context) {
     void _searchComicsByQuery(query) {
       setState(() {
-        _comicsFuture =
-            Provider.of<ComicsProvider>(context, listen: false).getComics(
-          query: query,
-          orderBy: "created_at",
-          order: "DESC",
-        );
+        _comicsFuture = context.read<ComicsProvider>().getComics(
+              query: query,
+              orderBy: "created_at",
+              order: "DESC",
+            );
       });
     }
 

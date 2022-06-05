@@ -2,7 +2,7 @@
 const API_HOST = "http://192.168.1.6:5000";
 const API_KEY = "bc733e58-cdbd-4bc9-966b-d46baedb5dc1";
 
-class AuthRoutes {
+class ApiRoutes {
   static const login = "/auth/login";
   static const register = "/auth/register";
   static const getComics = "/comics";
@@ -12,5 +12,9 @@ class AuthRoutes {
   static String getChapter(
           {required String comicId, required String chapterId}) =>
       "/comics/$comicId/chapters/$chapterId";
+  static String followComic({required String comicId}) =>
+      "/comics/$comicId/follow";
+  static String checkFollow({required String comicId}) =>
+      "/comics/$comicId/check-follow-status";
   static String getGenres = "/genres";
 }

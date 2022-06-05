@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:jii_comic_mobile/models/chapter.model.dart';
-import 'package:jii_comic_mobile/models/chapterDetailProps.dart';
+import 'package:jii_comic_mobile/models/chapter_detail_props.dart';
 import 'package:jii_comic_mobile/models/comic.model.dart';
 import 'package:jii_comic_mobile/providers/chapter.provider.dart';
 import 'package:jii_comic_mobile/providers/comics.provider.dart';
@@ -39,13 +39,13 @@ class ReadingScreenState extends State<ReadingScreen> {
             _comicId = props.comicId;
             _chapterId = props.chapterId;
             _comicName = props.comicName;
-            _chapterFuture =
-                Provider.of<ChaptersProvider>(context, listen: false)
-                    .getChapter(context,
-                        comicId: props.comicId, chapterId: props.chapterId);
-            _chapterListFuture =
-                Provider.of<ChaptersProvider>(context, listen: false)
-                    .getChapters(comicId: props.comicId);
+            _chapterFuture = context.read<ChaptersProvider>().getChapter(
+                context,
+                comicId: props.comicId,
+                chapterId: props.chapterId);
+            _chapterListFuture = context
+                .read<ChaptersProvider>()
+                .getChapters(comicId: props.comicId);
           },
         );
       },
@@ -128,9 +128,9 @@ class ReadingScreenState extends State<ReadingScreen> {
     final String comicId = props.comicId;
     final String chapterId = props.chapterId;
     final String? nextChapterId =
-        Provider.of<ChaptersProvider>(context, listen: true).nextChapterId;
+        Provider.of<ChaptersProvider>(context).nextChapterId;
     final String? prevChapterId =
-        Provider.of<ChaptersProvider>(context, listen: true).prevChapterId;
+        Provider.of<ChaptersProvider>(context).prevChapterId;
 
     return FutureBuilder(
       future: _chapterFuture,

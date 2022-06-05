@@ -9,7 +9,7 @@ import 'package:jii_comic_mobile/screens/login.screen.dart';
 import 'package:jii_comic_mobile/screens/register.screen.dart';
 import 'package:jii_comic_mobile/utils/settings_constants.dart';
 import 'package:jii_comic_mobile/widgets/primary_btn.dart';
-import 'package:jii_comic_mobile/screens/updateProfile.screen.dart';
+import 'package:jii_comic_mobile/screens/update_profile.screen.dart';
 import 'package:jii_comic_mobile/widgets/custom_bottom_navigation_bar.dart';
 import 'package:jii_comic_mobile/widgets/secondary_btn.dart';
 import 'package:provider/provider.dart';

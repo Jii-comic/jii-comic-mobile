@@ -6,7 +6,7 @@ import 'package:jii_comic_mobile/utils/api_constants.dart';
 class UserService {
   Future<Response> login(
       {required String email, required String password}) async {
-    final url = Uri.parse(API_HOST + AuthRoutes.login);
+    final url = Uri.parse(API_HOST + ApiRoutes.login);
 
     try {
       final Response response = await post(

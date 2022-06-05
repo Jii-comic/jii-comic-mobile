@@ -11,8 +11,18 @@ import 'package:jii_comic_mobile/services/user.service.dart';
 class AuthProvider extends ChangeNotifier {
   final UserService userService = UserService();
   User? _currentUser;
+  String? _accessToken;
 
   User? get currentUser => _currentUser;
+
+  String? get accessToken => _accessToken;
+
+  void removeSession() {
+    _currentUser = null;
+    _accessToken = null;
+
+    notifyListeners();
+  }
 
   void logout(context) {
     showDialog(
@@ -29,8 +39,7 @@ class AuthProvider extends ChangeNotifier {
           TextButton(
             child: const Text('Đăng xuất', style: TextStyle(color: Colors.red)),
             onPressed: () {
-              _currentUser = null;
-              notifyListeners();
+              removeSession();
 
               Navigator.of(context).pushNamedAndRemoveUntil(
                   ProfileScreen.routeName, (Route<dynamic> route) => false);
@@ -53,6 +62,7 @@ class AuthProvider extends ChangeNotifier {
       case 201:
       case 200:
         _currentUser = User.fromJson(resData["user"]);
+        _accessToken = resData["access_token"];
         notifyListeners();
 
         return Navigator.of(context).pushNamedAndRemoveUntil(

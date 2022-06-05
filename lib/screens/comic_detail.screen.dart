@@ -5,9 +5,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:jii_comic_mobile/models/chapter.model.dart';
-import 'package:jii_comic_mobile/models/chapterDetailProps.dart';
+import 'package:jii_comic_mobile/models/chapter_detail_props.dart';
 import 'package:jii_comic_mobile/models/comic.model.dart';
-import 'package:jii_comic_mobile/models/comicDetailProps.dart';
+import 'package:jii_comic_mobile/models/comic_detail_props.dart';
 import 'package:jii_comic_mobile/providers/comics.provider.dart';
 import 'package:jii_comic_mobile/screens/reading.page.dart';
 import 'package:jii_comic_mobile/utils/color_constants.dart';
@@ -28,6 +28,7 @@ class DetailScreen extends StatefulWidget {
 class _DetailScreenState extends State<DetailScreen>
     with TickerProviderStateMixin {
   late String _comicId;
+  bool _followed = false;
   Future<dynamic>? _comicFuture;
 
   void _goToChapter({required String chapterId}) async {
@@ -50,16 +51,26 @@ class _DetailScreenState extends State<DetailScreen>
     super.initState();
 
     WidgetsBinding.instance?.addPostFrameCallback(
-      (_) {
+      (_) async {
         final props =
             ModalRoute.of(context)!.settings.arguments as ComicDetailProps;
+        _followed = await context
+            .read<ComicsProvider>()
+            .checkFollowStatus(context, comicId: props.comicId);
         setState(() {
           _comicId = props.comicId;
-          _comicFuture = Provider.of<ComicsProvider>(context, listen: false)
+          _comicFuture = context
+              .read<ComicsProvider>()
               .getComic(context, comicId: props.comicId);
         });
       },
     );
+  }
+
+  _followThisComic() async {
+    _followed =
+        await context.read<ComicsProvider>().follow(context, comicId: _comicId);
+    setState(() {});
   }
 
   @override
@@ -80,7 +91,13 @@ class _DetailScreenState extends State<DetailScreen>
         title: Text("Jii Comic"),
         centerTitle: true,
         actions: [
-          IconButton(onPressed: () {}, icon: FaIcon(FontAwesomeIcons.bookmark))
+          IconButton(
+              onPressed: () => _followThisComic(),
+              icon: FaIcon(
+                !_followed
+                    ? FontAwesomeIcons.bookmark
+                    : FontAwesomeIcons.solidBookmark,
+              ))
         ],
       ),
       body: Column(
@@ -115,7 +132,7 @@ class _DetailScreenState extends State<DetailScreen>
         future: _comicFuture,
         builder: (context, snapshot) {
           if (snapshot.hasData) {
-            final comic = snapshot.data as Comic;
+            final comic = (snapshot.data as Comic);
 
             return SingleChildScrollView(
               padding: EdgeInsets.symmetric(vertical: 16),

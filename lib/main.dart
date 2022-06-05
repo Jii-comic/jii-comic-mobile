@@ -10,8 +10,8 @@ import 'package:jii_comic_mobile/screens/reading.page.dart';
 import 'package:jii_comic_mobile/screens/profile.screen.dart';
 import 'package:jii_comic_mobile/screens/register.screen.dart';
 import 'package:jii_comic_mobile/themes/default.theme.dart';
-import 'package:jii_comic_mobile/screens/detail.screen.dart';
-import 'package:jii_comic_mobile/screens/updateProfile.screen.dart';
+import 'package:jii_comic_mobile/screens/comic_detail.screen.dart';
+import 'package:jii_comic_mobile/screens/update_profile.screen.dart';
 import 'package:provider/provider.dart';
 
 void main() {

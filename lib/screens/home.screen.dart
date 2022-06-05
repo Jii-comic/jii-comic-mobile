@@ -5,12 +5,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:jii_comic_mobile/models/comic.model.dart';
-import 'package:jii_comic_mobile/models/comicDetailProps.dart';
+import 'package:jii_comic_mobile/models/comic_detail_props.dart';
 import 'package:jii_comic_mobile/models/user.model.dart';
 import 'package:jii_comic_mobile/providers/auth.provider.dart';
 import 'package:jii_comic_mobile/providers/comics.provider.dart';
 import 'package:jii_comic_mobile/screens/comics.screen.dart';
-import 'package:jii_comic_mobile/screens/detail.screen.dart';
+import 'package:jii_comic_mobile/screens/comic_detail.screen.dart';
 import 'package:jii_comic_mobile/screens/login.screen.dart';
 import 'package:jii_comic_mobile/widgets/comic_list.dart';
 import 'package:jii_comic_mobile/widgets/primary_btn.dart';
@@ -57,7 +57,8 @@ class _HomeScreenState extends State<HomeScreen> {
       (_) {
         setState(
           () {
-            Provider.of<ComicsProvider>(context, listen: false)
+            context
+                .read<ComicsProvider>()
                 .getComics(limit: 10, orderBy: "updated_at", order: "DESC")
                 .then(
               (comics) {

@@ -2,8 +2,8 @@ import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:jii_comic_mobile/models/comicDetailProps.dart';
-import 'package:jii_comic_mobile/screens/detail.screen.dart';
+import 'package:jii_comic_mobile/models/comic_detail_props.dart';
+import 'package:jii_comic_mobile/screens/comic_detail.screen.dart';
 
 class ComicCard extends StatelessWidget {
   const ComicCard(
