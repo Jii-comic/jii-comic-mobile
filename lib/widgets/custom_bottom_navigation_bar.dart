@@ -5,6 +5,7 @@ import 'package:jii_comic_mobile/models/comic.model.dart';
 import 'package:jii_comic_mobile/screens/comics.screen.dart';
 import 'package:jii_comic_mobile/screens/home.screen.dart';
 import 'package:jii_comic_mobile/screens/profile.screen.dart';
+import 'package:jii_comic_mobile/utils/color_constants.dart';
 
 class CustomBottomNavigationBar extends StatefulWidget {
   final String? activeRoute;
@@ -97,8 +98,8 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
               navItem["icon"],
               color: navItem["route"] == widget.activeRoute
                   ? Colors.white
-                  : Colors.black,
-              size: 24,
+                  : ColorConstants.regularColor,
+              size: 20,
             ),
             Padding(
               padding: EdgeInsets.only(top: 4),
@@ -106,7 +107,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
                   style: TextStyle(
                     color: navItem["route"] == widget.activeRoute
                         ? Colors.white
-                        : Colors.black,
+                        : ColorConstants.regularColor,
                     fontSize: 12,
                     fontWeight: FontWeight.w500,
                   )),

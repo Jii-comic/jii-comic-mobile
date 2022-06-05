@@ -153,10 +153,6 @@ class ReadingScreenState extends State<ReadingScreen> {
                     ),
                   ),
                 ),
-                leading: IconButton(
-                  icon: const Icon(Icons.arrow_back),
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
                 title: Center(
                   child: Text(
                     _comicName,
@@ -165,7 +161,10 @@ class ReadingScreenState extends State<ReadingScreen> {
                 ),
                 actions: [
                   IconButton(
-                      icon: const FaIcon(FontAwesomeIcons.list),
+                      icon: const FaIcon(
+                        FontAwesomeIcons.list,
+                        size: 20,
+                      ),
                       onPressed: () => _handleToggleChapterListModal()),
                 ]),
             body: ListView(

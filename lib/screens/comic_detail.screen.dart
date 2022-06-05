@@ -97,6 +97,7 @@ class _DetailScreenState extends State<DetailScreen>
                 !_followed
                     ? FontAwesomeIcons.bookmark
                     : FontAwesomeIcons.solidBookmark,
+                size: 20,
               ))
         ],
       ),
@@ -260,7 +261,7 @@ class _DetailScreenState extends State<DetailScreen>
                               child: Text("Bắt đầu đọc".toUpperCase()),
                               onPressed: () => _goToChapter(
                                   chapterId:
-                                      comic.chapters?[0].chapterId ?? ""),
+                                      comic.chapters?.last.chapterId ?? ""),
                             ),
                           ],
                         ),

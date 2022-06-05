@@ -7,6 +7,7 @@ import 'package:jii_comic_mobile/models/user.model.dart';
 import 'package:jii_comic_mobile/providers/auth.provider.dart';
 import 'package:jii_comic_mobile/screens/login.screen.dart';
 import 'package:jii_comic_mobile/screens/register.screen.dart';
+import 'package:jii_comic_mobile/utils/color_constants.dart';
 import 'package:jii_comic_mobile/utils/settings_constants.dart';
 import 'package:jii_comic_mobile/widgets/primary_btn.dart';
 import 'package:jii_comic_mobile/screens/update_profile.screen.dart';
@@ -73,7 +74,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               onPressed: _handleLogout,
               icon: FaIcon(
                 FontAwesomeIcons.arrowRightFromBracket,
-                size: 24,
+                size: 20,
               ),
               color: Colors.black,
             )
@@ -179,7 +180,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
           SizedBox(
             height: 8,
           ),
-          _renderSettingsItem(context, setting: Settings.personalInfo)
+          ListView.separated(
+            shrinkWrap: true,
+            itemBuilder: (context, index) {
+              return _renderSettingsItem(context,
+                  setting: Settings.personalInfo);
+            },
+            separatorBuilder: (context, index) => Divider(),
+            itemCount: 1,
+          )
         ],
       ),
     );
@@ -187,9 +196,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Widget _renderSettingsItem(context, {required Setting setting}) {
     return ListTile(
+      dense: true,
       onTap: () => setting.onPressed,
-      leading: FaIcon(setting.icon),
-      title: Text(setting.title),
+      leading: FaIcon(
+        setting.icon,
+        color: ColorConstants.regularColor,
+        size: 20,
+      ),
+      title: Text(setting.title, style: TextStyle(fontSize: 16)),
     );
   }
 }

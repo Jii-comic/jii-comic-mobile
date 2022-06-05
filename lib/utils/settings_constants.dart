@@ -3,7 +3,7 @@ import 'package:jii_comic_mobile/models/setting.model.dart';
 
 class Settings {
   static final personalInfo = Setting(
-    icon: FontAwesomeIcons.user,
+    icon: FontAwesomeIcons.circleUser,
     title: "Thông tin cá nhân",
     onPressed: () {},
   );

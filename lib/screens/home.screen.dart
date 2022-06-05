@@ -101,7 +101,10 @@ class _HomeScreenState extends State<HomeScreen> {
           IconButton(
               onPressed: () =>
                   Navigator.of(context).pushNamed(ComicsScreen.routeName),
-              icon: FaIcon(FontAwesomeIcons.magnifyingGlass))
+              icon: FaIcon(
+                FontAwesomeIcons.magnifyingGlass,
+                size: 20,
+              ))
         ],
       ),
       bottomNavigationBar: CustomBottomNavigationBar(
