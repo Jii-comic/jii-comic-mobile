@@ -21,12 +21,13 @@ class ComicList extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
+        Flex(
+          direction: Axis.horizontal,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              child: Flexible(
+            Flexible(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: Text(
                   title,
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),

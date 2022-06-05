@@ -53,7 +53,6 @@ class ReadingScreenState extends State<ReadingScreen> {
   }
 
   _goToChapter({required String chapterId}) {
-    Navigator.of(context).pop(); // Pop the modal
     Navigator.of(context).pushReplacementNamed(
       ReadingScreen.routeName,
       arguments: ChapterDetailProps(
@@ -92,8 +91,12 @@ class ReadingScreenState extends State<ReadingScreen> {
                             .map(
                               (e) => ListTile(
                                   dense: true,
-                                  onTap: () =>
-                                      _goToChapter(chapterId: e.chapterId),
+                                  onTap: () => {
+                                        Navigator.of(context)
+                                            .pop(), // Pop the modal
+
+                                        _goToChapter(chapterId: e.chapterId)
+                                      },
                                   title: Text(e.name,
                                       style: TextStyle(
                                           fontSize: 16,
