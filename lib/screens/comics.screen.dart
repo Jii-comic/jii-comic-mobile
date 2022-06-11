@@ -33,14 +33,18 @@ class ComicsScreenState extends State<ComicsScreen> {
 
     WidgetsBinding.instance?.addPostFrameCallback(
       (_) {
-        setState(() {
-          _comicsFuture = context
-              .read<ComicsProvider>()
-              .getComics(orderBy: "created_at", order: "DESC");
-          _genresFuture = context.read<ComicsProvider>().getGenres();
-        });
+        _fetchComics();
       },
     );
+  }
+
+  Future _fetchComics() async {
+    setState(() {
+      _comicsFuture = context
+          .read<ComicsProvider>()
+          .getComics(orderBy: "created_at", order: "DESC");
+      _genresFuture = context.read<ComicsProvider>().getGenres();
+    });
   }
 
   @override
@@ -137,29 +141,32 @@ class ComicsScreenState extends State<ComicsScreen> {
           ),
         ),
       ),
-      body: FutureBuilder(
-        future: _comicsFuture,
-        builder: (context, snapshot) {
-          if (snapshot.hasData) {
-            final List<Comic> comics = snapshot.data as List<Comic>;
-
-            return GridView.count(
-              padding: EdgeInsets.all(16),
-              crossAxisCount: 2,
-              mainAxisSpacing: 16,
-              crossAxisSpacing: 16,
-              childAspectRatio: 2 / 3,
-              children: comics
-                  .map((e) => ComicCard(
-                      comicId: e.comicId,
-                      title: e.name,
-                      thumbnailUrl: e.thumbnailUrl,
-                      desc: e.genres?.map((e) => e.name).join(", ") ?? ""))
-                  .toList(),
-            );
-          }
-          return Spinner();
-        },
+      body: RefreshIndicator(
+        onRefresh: _fetchComics,
+        child: FutureBuilder(
+          future: _comicsFuture,
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              final List<Comic> comics = snapshot.data as List<Comic>;
+      
+              return GridView.count(
+                padding: EdgeInsets.all(16),
+                crossAxisCount: 2,
+                mainAxisSpacing: 16,
+                crossAxisSpacing: 16,
+                childAspectRatio: 2 / 3,
+                children: comics
+                    .map((e) => ComicCard(
+                        comicId: e.comicId,
+                        title: e.name,
+                        thumbnailUrl: e.thumbnailUrl,
+                        desc: e.genres?.map((e) => e.name).join(", ") ?? ""))
+                    .toList(),
+              );
+            }
+            return Spinner();
+          },
+        ),
       ),
       bottomNavigationBar:
           CustomBottomNavigationBar(activeRoute: ComicsScreen.routeName),

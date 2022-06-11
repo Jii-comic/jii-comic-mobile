@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/cupertino.dart';
@@ -22,6 +23,20 @@ class ComicsProvider extends ChangeNotifier {
       {String? order, String? orderBy, int? limit, String? query}) async {
     final res = await comicsService.getComics(
         query: query, order: order, orderBy: orderBy, limit: limit);
+
+    final resData = json.decode(res.body);
+
+    return List.from(resData).map((e) => Comic.fromJson(e)).toList();
+  }
+
+  Future<List<Comic>> getFollowingComics(BuildContext context,
+      {String? order, String? orderBy, int? limit, String? query}) async {
+
+    final authProvider = context.read<AuthProvider>();
+    final accessToken = authProvider.accessToken;
+    
+    final res = await comicsService.getComics(
+        query: query, order: order, orderBy: orderBy, limit: limit, accessToken: accessToken, isFollowing: true);
 
     final resData = json.decode(res.body);
 

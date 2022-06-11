@@ -183,12 +183,15 @@ class _DetailScreenState extends State<DetailScreen>
             borderRadius: BorderRadius.vertical(bottom: Radius.circular(16)),
             child: Stack(children: [
               Positioned.fill(
-                child: Container(
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      fit: BoxFit.cover,
-                      image: NetworkImage(comic.thumbnailUrl ??
-                          "http://res.cloudinary.com/ddkz3f3xa/image/upload/v1653370609/cwn2qfht5irwzqw5o7d7.jpg"),
+                child: ColorFiltered(
+                  colorFilter: ColorFilter.mode(Colors.black.withOpacity(0.2), BlendMode.darken),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      image: DecorationImage(
+                        fit: BoxFit.cover,
+                        image: NetworkImage(comic.thumbnailUrl ??
+                            "http://res.cloudinary.com/ddkz3f3xa/image/upload/v1653370609/cwn2qfht5irwzqw5o7d7.jpg"),
+                      ),
                     ),
                   ),
                 ),

@@ -23,6 +23,23 @@ class AuthProvider extends ChangeNotifier {
     loginUsingStoredToken();
   }
 
+  Future<bool> checkActiveSession(BuildContext context) async {
+    final res =
+          await userService.loginUsingAccessToken(accessToken: _accessToken ?? "");
+      final resData = json.decode(res.body);
+
+      switch (res.statusCode) {
+        case (201):
+          _currentUser = User.fromJson(resData);
+          _accessToken = accessToken;
+          notifyListeners();
+          return true;
+        default:
+          removeSession();
+          return false;
+      }
+  }
+
   void loginUsingStoredToken() async {
     final _prefs = await SharedPreferences.getInstance();
     final accessToken = _prefs.getString("accessToken");

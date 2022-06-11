@@ -28,6 +28,8 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   List<Comic>? _recentUpdatedComics;
+  Future<List<Comic>>? _newComicsFuture;
+  Future<List<Comic>>? _followingComicsFuture;
   Comic? _highlightedComic;
 
   _highlightComic({Comic? comic}) => () {
@@ -50,44 +52,39 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-
-    WidgetsBinding.instance?.addPostFrameCallback(
-      (_) {
-        setState(
-          () {
-            context
-                .read<ComicsProvider>()
-                .getComics(limit: 10, orderBy: "updated_at", order: "DESC")
-                .then(
-              (comics) {
-                setState(
-                  () {
-                    _recentUpdatedComics = comics;
-
-                    if (comics.length > 0) {
-                      _highlightedComic = comics[0];
-                    }
-                  },
-                );
-              },
-            );
-          },
-        );
-      },
-    );
+    
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
+      _fetchComics();
+    });
   }
+
+  Future _fetchComics()  async {
+        final recentUpdatedComics =await context
+            .read<ComicsProvider>()
+            .getComics(limit: 10, orderBy: "updated_at", order: "DESC");
+    setState(() {
+      _recentUpdatedComics = recentUpdatedComics;
+      if (recentUpdatedComics.isNotEmpty) {
+        _highlightedComic = recentUpdatedComics[0];
+      }
+    });
+    
+    final newComics = context.read<ComicsProvider>().getComics(limit: 5, orderBy: "created_at", order: "DESC");
+    setState(() {
+      _newComicsFuture = newComics;
+    });
+
+    bool hasFollowingComics = await context.read<AuthProvider>().checkActiveSession(context);
+    if (hasFollowingComics) {
+      setState(() {
+        _followingComicsFuture = context.read<ComicsProvider>().getFollowingComics(context, limit: 5, orderBy: "updated_at", order: "DESC");
+      });
+    }
+  } 
 
   @override
   Widget build(BuildContext context) {
-    final User? user = Provider.of<AuthProvider>(context).currentUser;
-
-    void _handleUserBtnClick() {
-      if (user == null) {
-        Navigator.of(context).pushNamed(LoginScreen.routeName);
-      }
-    }
 
     return Scaffold(
       extendBodyBehindAppBar: true,
@@ -119,13 +116,19 @@ class _HomeScreenState extends State<HomeScreen> {
             child: _renderRecentUpdatedComics(),
           ),
           Expanded(
-            child: SingleChildScrollView(
-              child: Container(
-                padding: EdgeInsets.symmetric(vertical: 16),
-                child: Column(
-                  children: [
-                    _renderNewComics(),
-                  ],
+            child: RefreshIndicator(
+              onRefresh: _fetchComics,
+              child: SingleChildScrollView(
+                physics: AlwaysScrollableScrollPhysics(),
+                child: Container(
+                  padding: EdgeInsets.symmetric(vertical: 16),
+                  child: Column(
+                    children: [
+                      _renderNewComics(),
+                      SizedBox(height: 16,),
+                      if (_followingComicsFuture != null) _renderFollowingComics() 
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -150,12 +153,15 @@ class _HomeScreenState extends State<HomeScreen> {
               )
             : Stack(children: [
                 Positioned.fill(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      image: DecorationImage(
-                        fit: BoxFit.cover,
-                        image: NetworkImage(_highlightedComic?.thumbnailUrl ??
-                            "http://res.cloudinary.com/ddkz3f3xa/image/upload/v1653370609/cwn2qfht5irwzqw5o7d7.jpg"),
+                  child: ColorFiltered(
+                    colorFilter: ColorFilter.mode(Colors.black.withOpacity(0.2), BlendMode.darken),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          fit: BoxFit.cover,
+                          image: NetworkImage(_highlightedComic?.thumbnailUrl ??
+                              "http://res.cloudinary.com/ddkz3f3xa/image/upload/v1653370609/cwn2qfht5irwzqw5o7d7.jpg"),
+                        ),
                       ),
                     ),
                   ),
@@ -271,12 +277,27 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _renderNewComics() {
     return FutureBuilder(
-      future: Provider.of<ComicsProvider>(context)
-          .getComics(limit: 5, orderBy: "created_at", order: "DESC"),
+      future: _newComicsFuture,
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           return ComicList(
               title: "Mới",
+              hasMore: false,
+              comics: snapshot.data as List<Comic>);
+        } else {
+          return Spinner();
+        }
+      },
+    );
+  }
+
+  Widget _renderFollowingComics() {
+    return FutureBuilder(
+      future: _followingComicsFuture,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          return ComicList(
+              title: "Đang theo dõi",
               hasMore: false,
               comics: snapshot.data as List<Comic>);
         } else {

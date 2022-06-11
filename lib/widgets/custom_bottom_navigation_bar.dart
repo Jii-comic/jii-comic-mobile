@@ -3,6 +3,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:gradient_widgets/gradient_widgets.dart';
 import 'package:jii_comic_mobile/models/comic.model.dart';
 import 'package:jii_comic_mobile/screens/comics.screen.dart';
+import 'package:jii_comic_mobile/screens/following_comics.screen.dart';
 import 'package:jii_comic_mobile/screens/home.screen.dart';
 import 'package:jii_comic_mobile/screens/profile.screen.dart';
 import 'package:jii_comic_mobile/utils/color_constants.dart';
@@ -36,6 +37,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
     {
       "icon": FontAwesomeIcons.solidBookmark,
       "title": "Theo dõi",
+      "route": FollowingComicsScreen.routeName
     },
     {
       "icon": FontAwesomeIcons.solidUser,

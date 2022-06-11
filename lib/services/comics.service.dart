@@ -49,20 +49,28 @@ class ComicsService {
   }
 
   Future<Response> getComics(
-      {String? query, String? order, String? orderBy, int? limit}) async {
+      {String? query, String? order, String? orderBy, int? limit, String? accessToken, bool isFollowing = false}) async {
     final reqQuery = Uri(queryParameters: {
       "query": query ?? "",
       "order": order,
       "orderBy": orderBy,
       "limit": limit?.toString() ?? ""
     }).query;
-    final url = Uri.parse("$API_HOST${ApiRoutes.getComics}?$reqQuery");
+
+    Uri url = Uri.parse("$API_HOST${ApiRoutes.getComics}?$reqQuery");
+    if (isFollowing) {
+      url = Uri.parse("$API_HOST${ApiRoutes.getComics}/following?$reqQuery");
+    }
 
     print(url.toString());
 
     final Response response = await get(
       url,
-      headers: {"Content-Type": "application/json", "api-key": API_KEY},
+      headers: {
+        "Content-Type": "application/json", 
+        "api-key": API_KEY, 
+        "Authorization": "Bearer ${accessToken ?? ""}"
+      },
     );
 
     print('Status code: ${response.statusCode}');
