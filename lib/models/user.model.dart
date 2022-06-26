@@ -2,13 +2,13 @@ class User {
   String userId;
   String email;
   String name;
-  String? avatarUrl;
+  String avatarUrl;
 
   User(
       {required this.userId,
       required this.email,
       required this.name,
-      this.avatarUrl});
+      required this.avatarUrl});
 
   factory User.fromJson(dynamic json) {
     return User(

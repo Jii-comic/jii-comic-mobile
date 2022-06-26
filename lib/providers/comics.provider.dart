@@ -90,7 +90,7 @@ class ComicsProvider extends ChangeNotifier {
     final resData = json.decode(res.body);
 
     return {
-      "averageRatingScore": resData["average_rating_score"],
+      "averageRatingScore": resData["avg_rating_score"],
       "ratings":
           List.from(resData["ratings"]).map((e) => Rating.fromJson(e)).toList(),
     };

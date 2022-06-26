@@ -7,6 +7,7 @@ import 'package:jii_comic_mobile/screens/following_comics.screen.dart';
 import 'package:jii_comic_mobile/screens/greeting.screen.dart';
 import 'package:jii_comic_mobile/screens/home.screen.dart';
 import 'package:jii_comic_mobile/screens/login.screen.dart';
+import 'package:jii_comic_mobile/screens/rating.screen.dart';
 import 'package:jii_comic_mobile/screens/reading.page.dart';
 import 'package:jii_comic_mobile/screens/profile.screen.dart';
 import 'package:jii_comic_mobile/screens/register.screen.dart';
@@ -40,6 +41,7 @@ class JiiComic extends StatelessWidget {
           theme: defaultTheme,
           initialRoute: HomeScreen.routeName,
           routes: {
+            RatingScreen.routeName: (context) => const RatingScreen(),
             HomeScreen.routeName: (context) => const HomeScreen(),
             GreetingScreen.routeName: (context) => const GreetingScreen(),
             LoginScreen.routeName: (context) => const LoginScreen(),
