@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:jii_comic_mobile/providers/index.dart';
 import 'package:jii_comic_mobile/widgets/primary_btn.dart';
+import 'package:provider/provider.dart';
 
 class RegisterScreen extends StatefulWidget {
   static const routeName = "/register";
@@ -12,9 +14,21 @@ class RegisterScreen extends StatefulWidget {
 
 class _RegisterScreenState extends State<RegisterScreen> {
   final _formKey = GlobalKey<FormState>();
+  final _email = TextEditingController();
+  final _password = TextEditingController();
+  final _confirmPassword = TextEditingController();
+  final _name = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    void _submit() async {
+      await context.read<AuthProvider>().register(context,
+          email: _email.text,
+          password: _password.text,
+          confirmPassword: _confirmPassword.text,
+          name: _name.text);
+    }
+
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       extendBodyBehindAppBar: true,
@@ -38,25 +52,32 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 SizedBox(
                   height: 24,
                 ),
-                _renderInput(label: "Email", placeholder: "abc@abc.com"),
+                _renderInput(
+                    label: "Email",
+                    placeholder: "abc@abc.com",
+                    controller: _email),
                 SizedBox(
                   height: 24,
                 ),
-                _renderInput(label: "Tên"),
+                _renderInput(label: "Tên", controller: _name),
                 SizedBox(
                   height: 24,
                 ),
-                _renderInput(label: "Mật khẩu"),
+                _renderInput(
+                    label: "Mật khẩu", controller: _password, encrypted: true),
                 SizedBox(
                   height: 24,
                 ),
-                _renderInput(label: "Nhập lại mật khẩu"),
+                _renderInput(
+                    label: "Nhập lại mật khẩu",
+                    controller: _confirmPassword,
+                    encrypted: true),
                 SizedBox(
                   height: 24,
                 ),
                 PrimaryButton(
                   child: Text("Đăng kí".toUpperCase()),
-                  onPressed: () {},
+                  onPressed: _submit,
                 ),
                 SizedBox(
                   height: 20,
@@ -84,7 +105,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
     );
   }
 
-  Widget _renderInput({required label, placeholder = ""}) {
+  Widget _renderInput(
+      {required label,
+      placeholder = "",
+      required controller,
+      bool encrypted = false}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -93,6 +118,10 @@ class _RegisterScreenState extends State<RegisterScreen> {
           height: 8,
         ),
         TextFormField(
+          controller: controller,
+          obscureText: encrypted,
+          enableSuggestions: !encrypted,
+          autocorrect: !encrypted,
           decoration: InputDecoration(
             hintText: placeholder,
             filled: true,

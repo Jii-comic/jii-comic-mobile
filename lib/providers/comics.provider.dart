@@ -84,6 +84,28 @@ class ComicsProvider extends ChangeNotifier {
     return Comic.fromJson(resData);
   }
 
+  Future<dynamic> getMyRating(BuildContext context,
+      {required String comicId}) async {
+    final authProvider = context.read<AuthProvider>();
+    final accessToken = authProvider.accessToken;
+
+    final res = await comicsService.getMyRating(
+        comicId: comicId, accessToken: accessToken);
+    switch (res.statusCode) {
+      case (401):
+        return null;
+      case (200):
+        final resData = json.decode(res.body);
+        if (resData != null && resData != "") {
+          return Rating.fromJson(resData);
+        }
+
+        return null;
+    }
+
+    return null;
+  }
+
   Future<Map<String, dynamic>> getRatings({required String comicId}) async {
     final res = await comicsService.getRatings(comicId: comicId);
 
@@ -94,6 +116,44 @@ class ComicsProvider extends ChangeNotifier {
       "ratings":
           List.from(resData["ratings"]).map((e) => Rating.fromJson(e)).toList(),
     };
+  }
+
+  Future<bool> rateComic(BuildContext context,
+      {required comicId,
+      String? ratingId,
+      required double ratingScore,
+      required String content}) async {
+    final authProvider = context.read<AuthProvider>();
+    final accessToken = authProvider.accessToken;
+
+    final res = await comicsService.rate(
+        ratingId: ratingId,
+        comicId: comicId,
+        accessToken: accessToken ?? "",
+        ratingData: {"rating_score": ratingScore, "content": content});
+
+    switch (res.statusCode) {
+      case (401):
+        authProvider.removeSession();
+
+        Navigator.of(context).pop();
+        showDialog(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+            content: Text("Vui lòng đăng nhập!"),
+          ),
+        );
+        return false;
+      case (200):
+        final resData = json.decode(res.body);
+
+        Fluttertoast.showToast(msg: "Lưu đánh giá thành công!");
+
+        return true;
+      default:
+        Fluttertoast.showToast(msg: "Đã có lỗi xảy ra!");
+        return false;
+    }
   }
 
   Future<List<Genre>> getGenres() async {

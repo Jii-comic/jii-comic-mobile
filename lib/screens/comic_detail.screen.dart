@@ -10,6 +10,7 @@ import 'package:jii_comic_mobile/models/chapter_detail_props.dart';
 import 'package:jii_comic_mobile/models/comic.model.dart';
 import 'package:jii_comic_mobile/models/comic_detail_props.dart';
 import 'package:jii_comic_mobile/models/rating.model.dart';
+import 'package:jii_comic_mobile/models/rating_props.dart';
 import 'package:jii_comic_mobile/providers/comics.provider.dart';
 import 'package:jii_comic_mobile/screens/reading.page.dart';
 import 'package:jii_comic_mobile/utils/color_constants.dart';
@@ -33,6 +34,7 @@ class _DetailScreenState extends State<DetailScreen>
   bool _followed = false;
   Future<dynamic>? _comicFuture;
   Future<dynamic>? _ratingsFuture;
+  Future<dynamic>? _myRatingFuture;
 
   void _goToChapter({required String chapterId}) async {
     if (chapterId == "") {
@@ -67,6 +69,9 @@ class _DetailScreenState extends State<DetailScreen>
           _comicFuture = context
               .read<ComicsProvider>()
               .getComic(context, comicId: props.comicId);
+          _myRatingFuture = context
+              .read<ComicsProvider>()
+              .getMyRating(context, comicId: _comicId);
         });
       },
     );
@@ -135,37 +140,55 @@ class _DetailScreenState extends State<DetailScreen>
     );
   }
 
-  Widget _renderMyRating(double? ratingScore) {
-    return Container(
-      width: double.infinity,
-      child: Column(
-        children: [
-          Text(
-            "Đánh giá của bạn",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-          SizedBox(
-            height: 4,
-          ),
-          Text(
-            "Cập nhật lần cuối",
-            style: TextStyle(fontSize: 14, color: Theme.of(context).hintColor),
-          ),
-          SizedBox(
-            height: 16,
-          ),
-          RatingBar.builder(
-              itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
-              initialRating: ratingScore ?? 0,
-              allowHalfRating: true,
-              itemBuilder: (context, _) =>
-                  FaIcon(FontAwesomeIcons.solidStar, color: Colors.yellow[600]),
-              onRatingUpdate: (rating) {
-                Navigator.of(context).pushNamed("/rating");
-              })
-        ],
-      ),
-    );
+  Widget _renderMyRating() {
+    return FutureBuilder(
+        future: _myRatingFuture,
+        builder: (context, snapshot) {
+          Rating? myRating;
+          if (snapshot.hasData) {
+            myRating = snapshot.data as Rating;
+          }
+
+          return Container(
+            width: double.infinity,
+            child: Column(
+              children: [
+                Text(
+                  "Đánh giá của bạn",
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                if (myRating != null)
+                  SizedBox(
+                    height: 4,
+                  ),
+                if (myRating != null)
+                  Text(
+                    "Cập nhật lần cuối: ${timeago.format(myRating.updatedAt, locale: 'vi')}",
+                    style: TextStyle(
+                        fontSize: 14, color: Theme.of(context).hintColor),
+                  ),
+                SizedBox(
+                  height: 16,
+                ),
+                RatingBar.builder(
+                    itemPadding: EdgeInsets.symmetric(horizontal: 4.0),
+                    initialRating: myRating?.ratingScore ?? 0,
+                    allowHalfRating: true,
+                    itemBuilder: (context, _) => FaIcon(
+                        FontAwesomeIcons.solidStar,
+                        color: Colors.yellow[600]),
+                    onRatingUpdate: (rating) {
+                      Navigator.of(context).pushNamed("/rating",
+                          arguments: RatingProps(
+                            ratingId: myRating?.ratingId,
+                            comicId: _comicId,
+                            ratingScore: rating,
+                          ));
+                    })
+              ],
+            ),
+          );
+        });
   }
 
   Widget _renderRatingList(List<Rating> ratings) {
@@ -193,7 +216,9 @@ class _DetailScreenState extends State<DetailScreen>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             RatingBarIndicator(
-                itemBuilder: (context, _) => FaIcon(FontAwesomeIcons.solidStar),
+                rating: item.ratingScore ?? 0,
+                itemBuilder: (context, _) => FaIcon(FontAwesomeIcons.solidStar,
+                    color: Colors.yellow[600]),
                 itemSize: 16),
             SizedBox(
               height: 4,
@@ -219,7 +244,7 @@ class _DetailScreenState extends State<DetailScreen>
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _renderMyRating(avgRatingScore),
+                  _renderMyRating(),
                   SizedBox(height: 32),
                   Text("Danh sách đánh giá",
                       style: TextStyle(
@@ -287,7 +312,7 @@ class _DetailScreenState extends State<DetailScreen>
   Widget _renderComicAverageRating() {
     return FutureBuilder(
       builder: (context, snapshot) {
-        double? avgScore;
+        num? avgScore;
         if (snapshot.hasData) {
           avgScore =
               (snapshot.data as Map<String, dynamic>)["averageRatingScore"];
@@ -297,7 +322,7 @@ class _DetailScreenState extends State<DetailScreen>
           children: [
             FaIcon(
               FontAwesomeIcons.solidStar,
-              color: Colors.white,
+              color: Colors.yellow[600],
               size: 16,
             ),
             SizedBox(
