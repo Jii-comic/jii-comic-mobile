@@ -50,7 +50,7 @@ class _DetailScreenState extends State<DetailScreen>
     // TODO: implement initState
     super.initState();
 
-    WidgetsBinding.instance?.addPostFrameCallback(
+    WidgetsBinding.instance.addPostFrameCallback(
       (_) async {
         final props =
             ModalRoute.of(context)!.settings.arguments as ComicDetailProps;
@@ -184,7 +184,8 @@ class _DetailScreenState extends State<DetailScreen>
             child: Stack(children: [
               Positioned.fill(
                 child: ColorFiltered(
-                  colorFilter: ColorFilter.mode(Colors.black.withOpacity(0.2), BlendMode.darken),
+                  colorFilter: ColorFilter.mode(
+                      Colors.black.withOpacity(0.2), BlendMode.darken),
                   child: Container(
                     decoration: BoxDecoration(
                       image: DecorationImage(

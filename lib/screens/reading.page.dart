@@ -29,7 +29,7 @@ class ReadingScreenState extends State<ReadingScreen> {
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance?.addPostFrameCallback(
+    WidgetsBinding.instance.addPostFrameCallback(
       (_) async {
         final props =
             ModalRoute.of(context)!.settings.arguments as ChapterDetailProps;

@@ -53,39 +53,44 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    
-    WidgetsBinding.instance?.addPostFrameCallback((_) {
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       _fetchComics();
     });
   }
 
-  Future _fetchComics()  async {
-        final recentUpdatedComics =await context
-            .read<ComicsProvider>()
-            .getComics(limit: 10, orderBy: "updated_at", order: "DESC");
+  Future _fetchComics() async {
+    final recentUpdatedComics = await context
+        .read<ComicsProvider>()
+        .getComics(limit: 10, orderBy: "updated_at", order: "DESC");
     setState(() {
       _recentUpdatedComics = recentUpdatedComics;
       if (recentUpdatedComics.isNotEmpty) {
         _highlightedComic = recentUpdatedComics[0];
       }
     });
-    
-    final newComics = context.read<ComicsProvider>().getComics(limit: 5, orderBy: "created_at", order: "DESC");
+
+    final newComics = context
+        .read<ComicsProvider>()
+        .getComics(limit: 5, orderBy: "created_at", order: "DESC");
     setState(() {
       _newComicsFuture = newComics;
     });
 
-    bool hasFollowingComics = await context.read<AuthProvider>().checkActiveSession(context);
+    bool hasFollowingComics =
+        await context.read<AuthProvider>().checkActiveSession(context);
     if (hasFollowingComics) {
       setState(() {
-        _followingComicsFuture = context.read<ComicsProvider>().getFollowingComics(context, limit: 5, orderBy: "updated_at", order: "DESC");
+        _followingComicsFuture = context
+            .read<ComicsProvider>()
+            .getFollowingComics(context,
+                limit: 5, orderBy: "updated_at", order: "DESC");
       });
     }
-  } 
+  }
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       extendBodyBehindAppBar: true,
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
@@ -125,8 +130,11 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Column(
                     children: [
                       _renderNewComics(),
-                      SizedBox(height: 16,),
-                      if (_followingComicsFuture != null) _renderFollowingComics() 
+                      SizedBox(
+                        height: 16,
+                      ),
+                      if (_followingComicsFuture != null)
+                        _renderFollowingComics()
                     ],
                   ),
                 ),
@@ -154,7 +162,8 @@ class _HomeScreenState extends State<HomeScreen> {
             : Stack(children: [
                 Positioned.fill(
                   child: ColorFiltered(
-                    colorFilter: ColorFilter.mode(Colors.black.withOpacity(0.2), BlendMode.darken),
+                    colorFilter: ColorFilter.mode(
+                        Colors.black.withOpacity(0.2), BlendMode.darken),
                     child: Container(
                       decoration: BoxDecoration(
                         image: DecorationImage(

@@ -20,9 +20,17 @@ class ComicsProvider extends ChangeNotifier {
   GenresService genresService = GenresService();
 
   Future<List<Comic>> getComics(
-      {String? order, String? orderBy, int? limit, String? query}) async {
+      {String? order,
+      String? orderBy,
+      int? limit,
+      String? query,
+      String? genreId}) async {
     final res = await comicsService.getComics(
-        query: query, order: order, orderBy: orderBy, limit: limit);
+        query: query,
+        order: order,
+        orderBy: orderBy,
+        limit: limit,
+        genreId: genreId);
 
     final resData = json.decode(res.body);
 
@@ -31,12 +39,16 @@ class ComicsProvider extends ChangeNotifier {
 
   Future<List<Comic>> getFollowingComics(BuildContext context,
       {String? order, String? orderBy, int? limit, String? query}) async {
-
     final authProvider = context.read<AuthProvider>();
     final accessToken = authProvider.accessToken;
-    
+
     final res = await comicsService.getComics(
-        query: query, order: order, orderBy: orderBy, limit: limit, accessToken: accessToken, isFollowing: true);
+        query: query,
+        order: order,
+        orderBy: orderBy,
+        limit: limit,
+        accessToken: accessToken,
+        isFollowing: true);
 
     final resData = json.decode(res.body);
 

@@ -20,42 +20,50 @@ class FollowingComicsScreen extends StatefulWidget {
 }
 
 class _FollowingComicsScreenState extends State<FollowingComicsScreen> {
-    Future<List<Comic>>? _comicsFuture;
+  Future<List<Comic>>? _comicsFuture;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
 
-    WidgetsBinding.instance?.addPostFrameCallback(
+    WidgetsBinding.instance.addPostFrameCallback(
       (_) async {
-        
         _fetchComics();
       },
     );
   }
 
   Future _fetchComics() async {
-    final canAccessScreen =  await context.read<AuthProvider>().checkActiveSession(context);
-        if (!canAccessScreen) {
-          await showDialog(
-            context: context,
-            builder: (BuildContext context) => AlertDialog(
-              title: Text("Thông báo"),
-              content: Text("Vui lòng đăng nhập!"),
-              actions: [TextButton(onPressed: () {
-                Navigator.of(context).pushReplacementNamed("/profile");
-              }, child: Text("OK"))],
-            ),
-          );
+    final canAccessScreen =
+        await context.read<AuthProvider>().checkActiveSession(context);
+    if (!canAccessScreen) {
+      await showDialog(
+        context: context,
+        builder: (BuildContext context) => AlertDialog(
+          title: Text("Thông báo"),
+          content: Text("Vui lòng đăng nhập!"),
+          actions: [
+            TextButton(
+                onPressed: () {
+                  Navigator.of(context).pushReplacementNamed("/profile");
+                },
+                child: Text("OK"))
+          ],
+        ),
+      );
 
-          return;
-        }
+      return;
+    }
 
-        setState(() {
-          _comicsFuture = Provider.of<ComicsProvider>(context, listen: false)
-              .getFollowingComics(context, orderBy: "created_at", order: "DESC", );
-        });
+    setState(() {
+      _comicsFuture = Provider.of<ComicsProvider>(context, listen: false)
+          .getFollowingComics(
+        context,
+        orderBy: "created_at",
+        order: "DESC",
+      );
+    });
   }
 
   @override
@@ -63,20 +71,19 @@ class _FollowingComicsScreenState extends State<FollowingComicsScreen> {
     return Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       appBar: AppBar(
-        flexibleSpace: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.bottomLeft,
-              end: Alignment.topRight,
-              colors: [
-                ColorConstants.gradientFirstColor,
-                ColorConstants.gradientSecondColor,
-              ],
+          flexibleSpace: Container(
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.bottomLeft,
+                end: Alignment.topRight,
+                colors: [
+                  ColorConstants.gradientFirstColor,
+                  ColorConstants.gradientSecondColor,
+                ],
+              ),
             ),
           ),
-        ),
-        title: Center(child: Text("Truyện đang theo dõi"))
-      ),
+          title: Center(child: Text("Truyện đang theo dõi"))),
       body: RefreshIndicator(
         onRefresh: _fetchComics,
         child: FutureBuilder(
@@ -84,7 +91,7 @@ class _FollowingComicsScreenState extends State<FollowingComicsScreen> {
           builder: (context, snapshot) {
             if (snapshot.hasData) {
               final List<Comic> comics = snapshot.data as List<Comic>;
-      
+
               return GridView.count(
                 padding: EdgeInsets.all(16),
                 crossAxisCount: 2,
@@ -104,8 +111,8 @@ class _FollowingComicsScreenState extends State<FollowingComicsScreen> {
           },
         ),
       ),
-      bottomNavigationBar:
-          CustomBottomNavigationBar(activeRoute: FollowingComicsScreen.routeName),
+      bottomNavigationBar: CustomBottomNavigationBar(
+          activeRoute: FollowingComicsScreen.routeName),
     );
   }
 }
