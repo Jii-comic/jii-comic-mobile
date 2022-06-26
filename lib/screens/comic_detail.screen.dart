@@ -287,6 +287,11 @@ class _DetailScreenState extends State<DetailScreen>
   Widget _renderComicAverageRating() {
     return FutureBuilder(
       builder: (context, snapshot) {
+        double? avgScore;
+        if (snapshot.hasData) {
+          avgScore =
+              (snapshot.data as Map<String, dynamic>)["averageRatingScore"];
+        }
         return Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -298,7 +303,7 @@ class _DetailScreenState extends State<DetailScreen>
             SizedBox(
               width: 8,
             ),
-            Text("0")
+            Text((avgScore ?? 0).toString())
           ],
         );
       },
