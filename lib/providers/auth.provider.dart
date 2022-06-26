@@ -24,20 +24,20 @@ class AuthProvider extends ChangeNotifier {
   }
 
   Future<bool> checkActiveSession(BuildContext context) async {
-    final res =
-          await userService.loginUsingAccessToken(accessToken: _accessToken ?? "");
-      final resData = json.decode(res.body);
+    final res = await userService.loginUsingAccessToken(
+        accessToken: _accessToken ?? "");
+    final resData = json.decode(res.body);
 
-      switch (res.statusCode) {
-        case (201):
-          _currentUser = User.fromJson(resData);
-          _accessToken = accessToken;
-          notifyListeners();
-          return true;
-        default:
-          removeSession();
-          return false;
-      }
+    switch (res.statusCode) {
+      case (201):
+        _currentUser = User.fromJson(resData);
+        _accessToken = accessToken;
+        notifyListeners();
+        return true;
+      default:
+        removeSession();
+        return false;
+    }
   }
 
   void loginUsingStoredToken() async {
@@ -94,6 +94,49 @@ class AuthProvider extends ChangeNotifier {
         ],
       ),
     );
+  }
+
+  Future<dynamic> register(context,
+      {required String email,
+      required String password,
+      required String confirmPassword,
+      required String name}) async {
+    final Response res = await userService.register(registerData: {
+      "email": email,
+      "password": password,
+      "repeatPassword": confirmPassword,
+      "name": name
+    });
+    final resData = json.decode(res.body);
+
+    switch (res.statusCode) {
+      case 201:
+      case 200:
+        Navigator.of(context).pushReplacementNamed("/login");
+        return showDialog(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+            title: Text("Thông báo"),
+            content: Text("Đăng kí thành công! Vui lòng đăng nhập!"),
+          ),
+        );
+      case 400:
+        return showDialog(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+            title: Text("Thông báo"),
+            content: Text(resData["errors"]?[0]),
+          ),
+        );
+      default:
+        return showDialog(
+          context: context,
+          builder: (BuildContext context) => AlertDialog(
+            title: Text("Thông báo"),
+            content: Text("Đã có lỗi xảy ra!"),
+          ),
+        );
+    }
   }
 
   Future<dynamic> login(

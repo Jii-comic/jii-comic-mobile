@@ -137,6 +137,72 @@ class ComicsService {
     return response;
   }
 
+  Future<Response> getMyRating(
+      {required String comicId, String? accessToken}) async {
+    Uri url = Uri.parse(
+        "$API_HOST${ApiRoutes.getComicRatings(comicId: comicId)}/my-rating");
+
+    print(url.toString());
+
+    final Response response = await get(
+      url,
+      headers: {
+        "Content-Type": "application/json",
+        "api-key": API_KEY,
+        "Authorization": "Bearer ${accessToken ?? ""}"
+      },
+    );
+
+    print("Status code: ${response.statusCode}");
+    print("Data: ${response.body}");
+
+    return response;
+  }
+
+  Future<Response> rate(
+      {String? ratingId,
+      required String comicId,
+      String? accessToken,
+      dynamic ratingData}) async {
+    final hasRated = ratingId != null;
+    Uri url =
+        Uri.parse("$API_HOST${ApiRoutes.getComicRatings(comicId: comicId)}");
+    if (hasRated) {
+      url = Uri.parse(
+          "$API_HOST${ApiRoutes.getComicRatings(comicId: comicId)}/$ratingId");
+    }
+
+    print(url.toString());
+
+    Response response;
+    if (hasRated) {
+      response = await patch(
+        url,
+        body: json.encode(ratingData),
+        headers: {
+          "Content-Type": "application/json",
+          "api-key": API_KEY,
+          "Authorization": "Bearer ${accessToken ?? ""}"
+        },
+      );
+    } else {
+      response = await post(
+        url,
+        body: json.encode(ratingData),
+        headers: {
+          "Content-Type": "application/json",
+          "api-key": API_KEY,
+          "Authorization": "Bearer ${accessToken ?? ""}"
+        },
+      );
+    }
+
+    print("Status code: ${response.statusCode}");
+    print("Data: ${response.body}");
+
+    return response;
+  }
+
   Future<Response> getRatings({required String comicId}) async {
     final url =
         Uri.parse("$API_HOST${ApiRoutes.getComicRatings(comicId: comicId)}");
