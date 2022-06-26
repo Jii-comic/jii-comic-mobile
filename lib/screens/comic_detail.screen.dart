@@ -8,6 +8,7 @@ import 'package:jii_comic_mobile/models/chapter.model.dart';
 import 'package:jii_comic_mobile/models/chapter_detail_props.dart';
 import 'package:jii_comic_mobile/models/comic.model.dart';
 import 'package:jii_comic_mobile/models/comic_detail_props.dart';
+import 'package:jii_comic_mobile/models/rating.model.dart';
 import 'package:jii_comic_mobile/providers/comics.provider.dart';
 import 'package:jii_comic_mobile/screens/reading.page.dart';
 import 'package:jii_comic_mobile/utils/color_constants.dart';
@@ -30,6 +31,7 @@ class _DetailScreenState extends State<DetailScreen>
   late String _comicId;
   bool _followed = false;
   Future<dynamic>? _comicFuture;
+  Future<dynamic>? _ratingsFuture;
 
   void _goToChapter({required String chapterId}) async {
     if (chapterId == "") {
@@ -59,6 +61,8 @@ class _DetailScreenState extends State<DetailScreen>
             .checkFollowStatus(context, comicId: props.comicId);
         setState(() {
           _comicId = props.comicId;
+          _ratingsFuture =
+              context.read<ComicsProvider>().getRatings(comicId: props.comicId);
           _comicFuture = context
               .read<ComicsProvider>()
               .getComic(context, comicId: props.comicId);

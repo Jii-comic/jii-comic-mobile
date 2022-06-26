@@ -136,4 +136,21 @@ class ComicsService {
 
     return response;
   }
+
+  Future<Response> getRatings({required String comicId}) async {
+    final url =
+        Uri.parse("$API_HOST${ApiRoutes.getComicRatings(comicId: comicId)}");
+
+    print(url.toString());
+
+    final Response response = await get(
+      url,
+      headers: {"Content-Type": "application/json", "api-key": API_KEY},
+    );
+
+    print("Status code: ${response.statusCode}");
+    print("Data: ${response.body}");
+
+    return response;
+  }
 }

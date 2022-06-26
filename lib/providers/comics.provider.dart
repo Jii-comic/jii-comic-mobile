@@ -8,6 +8,7 @@ import 'package:http/http.dart' as http;
 import 'package:jii_comic_mobile/models/chapter.model.dart';
 import 'package:jii_comic_mobile/models/comic.model.dart';
 import 'package:jii_comic_mobile/models/genre.model.dart';
+import 'package:jii_comic_mobile/models/rating.model.dart';
 import 'package:jii_comic_mobile/providers/auth.provider.dart';
 import 'package:jii_comic_mobile/services/comics.service.dart';
 import 'package:jii_comic_mobile/services/genres.service.dart';
@@ -81,6 +82,18 @@ class ComicsProvider extends ChangeNotifier {
       );
     }
     return Comic.fromJson(resData);
+  }
+
+  Future<Map<String, dynamic>> getRatings({required String comicId}) async {
+    final res = await comicsService.getRatings(comicId: comicId);
+
+    final resData = json.decode(res.body);
+
+    return {
+      "averageRatingScore": resData["average_rating_score"],
+      "ratings":
+          List.from(resData["ratings"]).map((e) => Rating.fromJson(e)).toList(),
+    };
   }
 
   Future<List<Genre>> getGenres() async {

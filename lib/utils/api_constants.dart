@@ -19,4 +19,6 @@ class ApiRoutes {
   static String checkFollow({required String comicId}) =>
       "/comics/$comicId/check-follow-status";
   static String getGenres = "/genres";
+  static String getComicRatings({required String comicId}) =>
+      "/comics/$comicId/ratings";
 }
